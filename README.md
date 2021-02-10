@@ -1,4 +1,6 @@
 # TrackViewer
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer?ref=badge_shield)
+
 
 Visualize your KML, KMZ, GPX or TCX track in 3D and 2D. Rotate, Tilt and Zoom into your track.
 
@@ -82,3 +84,7 @@ Color of the connecting line in 2D style if `useLines: true`.
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromMap` or `elevation: trackViewer.elevationNone`.
 ### lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255]
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer?ref=badge_large)
