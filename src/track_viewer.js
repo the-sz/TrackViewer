@@ -1,6 +1,8 @@
 //
 // TrackViewer
 //
+// https://github.com/the-sz/TrackViewer
+//
 // Visualize your KML, KMZ, GPX or TCX track in 3D and 2D.
 // Rotate, Tilt and Zoom into your track.
 // In 2D you can see each recorded position.
@@ -104,59 +106,48 @@ var trackViewer=(function()
 				{
 					if (file.split('.').pop()=='kmz')
 					{
-						// compressed remote file was specified, extract it first
-						zip.workerScriptsPath=_settings.zipLibraryLocation;
-						zip.createReader(new zip.TextReader(data),function(reader)
+						// remote compressed file, extract it first
+						if ((typeof module==="object") && (typeof module.exports==="object"))
 						{
-							reader.getEntries(function(entries)
+							// running in node.js
+							var zip=new JSZip(data,{ base64: false, checkCRC32: true });
+							var content=zip.files['doc.kml'];
+							_load($.parseXML(content._data));
+						}
+						else
+						{
+							// running in browser
+							JSZip.loadAsync(data).then(function(zip)
 							{
-								if (entries.length>0)
+								zip.file('doc.kml').async("string").then(function(content)
 								{
-									entries[0].getData(new zip.TextWriter(),function(text)
-									{
-										_load($.parseXML(text));
-
-										reader.close(function()
-										{
-										});
-									});
-								}
+									_load($.parseXML(content));
+								});
 							});
-						});
+						}
 					}
 					else
 					{
 						// remote file
-						_load($.parseXML(data));
+						_load($.parseXML(new TextDecoder("utf-8").decode(data)));
 					}
 				}
 			});
 		}
 		else if (file.name.split('.').pop()=='kmz')
 		{
-			// local compressed file was specified, extract it first
-			zip.workerScriptsPath=_settings.zipLibraryLocation;
-			zip.createReader(new zip.BlobReader(file),function(reader)
+			// local compressed file, extract it first
+			JSZip.loadAsync(file).then(function (zip)
 			{
-				reader.getEntries(function(entries)
+				zip.file('doc.kml').async("string").then(function(content)
 				{
-					if (entries.length>0)
-					{
-						entries[0].getData(new zip.TextWriter(),function(text)
-						{
-							_load($.parseXML(text));
-
-							reader.close(function()
-							{
-							});
-						});
-					}
+					_load($.parseXML(content));
 				});
 			});
 		}
 		else
 		{
-			// load specified local file
+			// local file
 			var reader=new FileReader();
 			reader.onload=function(event)
 			{
@@ -291,6 +282,7 @@ var trackViewer=(function()
 				// KML v1
 				coordinates=nodes;
 				nodes=$(data).find('when');
+				//console.log("KML v1");
 				break;
 			}
 
@@ -300,18 +292,11 @@ var trackViewer=(function()
 				// KML v1
 				coordinates=nodes;
 				nodes=$(data).find('when');
+				//console.log("KML v1");
 				break;
 			}
 
-			nodes=$(data).find('Folder').children();
-			if (nodes.length>0)
-			{
-				// KML v2
-				isKML2=true;
-				break;
-			}
-
-			var nodesCoordinates=$(data).find('LineString').find('coordinates');
+			var nodesCoordinates=$(data).find('Placemark').children('LineString').children('coordinates');
 			if (nodesCoordinates.length>0)
 			{
 				// KML Google My Maps
@@ -330,7 +315,17 @@ var trackViewer=(function()
 						}
 					});
 				});
+				//console.log("KML Google My Maps");
 				isMyMaps=true;
+				break;
+			}
+
+			nodes=$(data).find('Folder').children();
+			if (nodes.length>0)
+			{
+				// KML v2
+				//console.log("KML v2");
+				isKML2=true;
 				break;
 			}
 
@@ -338,6 +333,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// GPX
+				//console.log("GPX");
 				isGPX=true;
 				break;
 			}
@@ -346,6 +342,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// TCX
+				//console.log("TCX");
 				isTCX=true;
 				break;
 			}
@@ -484,31 +481,6 @@ var trackViewer=(function()
 			if (center===undefined)
 				center=position;
 		});
-/*
-		// kml v1 format
-		var coordinates=$(data).find('gx\\:coord');
-		var index=0;
-		$(data).find('when').each(function()
-		{
-			var date=new Date($(this).text());
-			var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-
-			// format 1
-			var values=$($(coordinates)[index]).text().split(' ');
-			if (values.length==3)
-			{
-				var title=dateString+' - Height: '+parseFloat(values[2]).toFixed(0)+'m';
-				var position={lat:parseFloat(values[1]), lng:parseFloat(values[0])};
-
-				_create2DMarker(map,date,position,title);
-
-				if (center===undefined)
-					center=position;
-			}
-
-			index++;
-		});
-*/
 
 		// create line
 		if (_settings.useLines==true)

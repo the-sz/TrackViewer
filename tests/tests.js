@@ -5,8 +5,8 @@ const chai=require('chai');
 const expect=chai.expect;
 
 // create zip
-const zip=require('../libs/zip/zip.js');
-global.zip=zip;
+const JSZip=require("node-zip");
+global.JSZip=JSZip;
 
 // create jquery
 const { JSDOM } = require('jsdom');
@@ -169,10 +169,10 @@ describe('Init()',function()
 		assert(global.window.addEventListener.calledOnceWith('resize'));
 
 		assert(spyNull.height.calledOnce);
-		expect(spyNull.height.args[0][0]).to.equal(spyWindow.height.returnValues[0])
+		expect(spyNull.height.args[0][0]).to.equal(spyWindow.height.returnValues[0]);
 
 		assert(spyNull.width.calledOnce);
-		expect(spyNull.width.args[0][0]).to.equal((spyWindow.width.returnValues[0] - jQueryOffset.left - settings.spacingRight))
+		expect(spyNull.width.args[0][0]).to.equal((spyWindow.width.returnValues[0] - jQueryOffset.left - settings.spacingRight));
 	});
 });
 
@@ -180,19 +180,21 @@ describe('Load()',function()
 {
 	function test2D(_this,file,count,coordinates,done)
 	{
+		var stub=null;
+
 		_this.timeout(20*1000);
 
 		global.navigator={ language: 'en' };
 
 		global.google.maps.marker=[];
 
-		var kml=fs.readFileSync(file,'utf8');
+		var fileContent=fs.readFileSync(file);
 
-		var stub=sinon.stub(global.jQuery,'ajax');
+		stub=sinon.stub(global.jQuery,'ajax');
 
 		trackViewer.load(file,{ style: trackViewer.style2DAllRecords, domContainer:null });
 
-		stub.yieldTo('success',kml);
+		stub.yieldTo('success',fileContent);
 
 		stub.restore();
 
@@ -201,8 +203,7 @@ describe('Load()',function()
 		//console.log(global.google.maps.marker);
 		for (index=0;index<coordinates.length;index++)
 		{
-			expect(global.google.maps.marker[index].position.lat).to.equal(coordinates[index][1])
-			expect(global.google.maps.marker[index].position.lng).to.equal(coordinates[index][0])
+			expect(global.google.maps.marker[index].position).deep.to.equal({ lat: coordinates[index][1], lng: coordinates[index][0]});
 		}
 
 		done();
@@ -212,7 +213,7 @@ describe('Load()',function()
 	{
 		_this.timeout(20*1000);
 
-		var kml=fs.readFileSync(file,'utf8');
+		var fileContent=fs.readFileSync(file);
 
 		var stub=sinon.stub(global.jQuery,'ajax');
 
@@ -220,7 +221,7 @@ describe('Load()',function()
 		
 		trackViewer.load(file,{ style: trackViewer.style3DBlueBackground, domContainer: $('<div></div>')[0] });
 
-		stub.yieldTo('success',kml);
+		stub.yieldTo('success',fileContent);
 
 		stub.restore();
 		add.restore();
@@ -240,7 +241,7 @@ describe('Load()',function()
 	{
 		_this.timeout(20*1000);
 
-		var kml=fs.readFileSync(file,'utf8');
+		var fileContent=fs.readFileSync(file);
 
 		var stub=sinon.stub(global.jQuery,'ajax');
 
@@ -248,7 +249,7 @@ describe('Load()',function()
 
 		trackViewer.load(file,{ style: trackViewer.style3DMapboxStreetMap, domContainer:null });
 
-		stub.yieldTo('success',kml);
+		stub.yieldTo('success',fileContent);
 
 		stub.restore();
 		addSource.restore();
@@ -295,10 +296,18 @@ describe('Load()',function()
 								coordinates: [[13.69201667,50.77527167],[13.69196866,50.77523138]],
 								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.004800999999865496, y: -0.004029000000116412, z: 0.03833333333333343 }, { x: -0.0006389999999356633, y: -0.011080000000163182, z: 0.03875000000000019 }]
 							},
-
-// xxx kmz files: use real github urls
-
-
+/*
+							{	file: __dirname+'/test1.kmz',			// zipped KML Google My Maps
+								count: 39777,
+								coordinates: [[-80.28405, 25.80854],[-80.2841, 25.80854]],
+								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.004800999999865496, y: -0.004029000000116412, z: 0.03833333333333343 }, { x: -0.0006389999999356633, y: -0.011080000000163182, z: 0.03875000000000019 }]
+							},
+*/							
+							{	file: __dirname+'/test2.kmz',			// zipped KML Google My Maps
+								count: 39777,
+								coordinates: [[-80.28405, 25.80854],[-80.2841, 25.80854]],
+								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.005000000000165983, y: 0, z: 0.04005 }, { x: -0.01100000000064938, y: -0.0019999999999242846, z: 0.04005 }]
+							},
 
 						];
 
