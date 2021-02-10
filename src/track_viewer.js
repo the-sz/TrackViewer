@@ -271,6 +271,180 @@ var trackViewer=(function()
 		}
 	}
 
+	// convert all suppored track formats into one position list
+	function _parseTrack(data)
+	{
+		var nodes;
+		var positions=[];
+		var isTCX=false;
+		var isGPX=false;
+		var isKML2=false;
+		var isMyMaps=false;
+		var userLang=navigator.language || navigator.userLanguage;
+		var coordinates=null;
+
+		for (;;)
+		{
+			nodes=$(data).find('coord');
+			if (nodes.length>0)
+			{
+				// KML v1
+				coordinates=nodes;
+				nodes=$(data).find('when');
+				break;
+			}
+
+			nodes=$(data).find('gx\\:coord');
+			if (nodes.length>0)
+			{
+				// KML v1
+				coordinates=nodes;
+				nodes=$(data).find('when');
+				break;
+			}
+
+			nodes=$(data).find('Folder').children();
+			if (nodes.length>0)
+			{
+				// KML v2
+				isKML2=true;
+				break;
+			}
+
+			var nodesCoordinates=$(data).find('LineString').find('coordinates');
+			if (nodesCoordinates.length>0)
+			{
+				// KML Google My Maps
+				nodes=[];
+				$(nodesCoordinates).each(function()
+				{
+					var name=$(this).parent().parent().children('name').text();
+
+					$($(this).text().split(' ')).each(function()
+					{
+						var parts=this.split(",");
+						if (parts.length==3)
+						{
+							parts.push(name);
+							nodes.push(parts);
+						}
+					});
+				});
+				isMyMaps=true;
+				break;
+			}
+
+			nodes=$(data).find('trk').find('trkseg').children();
+			if (nodes.length>0)
+			{
+				// GPX
+				isGPX=true;
+				break;
+			}
+
+			nodes=$(data).find('Trackpoint');
+			if (nodes.length>0)
+			{
+				// TCX
+				isTCX=true;
+				break;
+			}
+
+			break;
+		}
+
+		var index=0;
+		$(nodes).each(function()
+		{
+			var position={};
+			var valid=false;
+
+			if (isTCX==true)
+			{
+				// TCX
+				position.x=parseFloat($(this).children('Position').children('LongitudeDegrees').text());
+				position.y=parseFloat($(this).children('Position').children('LatitudeDegrees').text());
+				position.z=parseFloat($(this).children('AltitudeMeters').text());
+
+				position.date=new Date($(this).children('Time').text());
+				var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+				position.title=dateString+' - Height: '+position.z.toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
+
+				valid=true;
+			}
+			else if (isGPX==true)
+			{
+				// GPX
+				position.x=parseFloat($(this)[0].attributes.lon.value);
+				position.y=parseFloat($(this)[0].attributes.lat.value);
+				position.z=parseFloat($(this).children('ele').text());
+
+				position.date=new Date($(this).children('time').text());
+				var dateString=luxon.DateTime.fromISO($(this).children('time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+				position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+	
+				valid=true;
+			}
+			else if (isKML2==true)
+			{
+				// KML v2
+				var values=$(this).children('Point').children('coordinates').text().split(',');
+				if (values.length==3)
+				{
+					position.x=parseFloat(values[0]);
+					position.y=parseFloat(values[1]);
+					position.z=parseFloat(values[2]);
+
+					var dateRaw=$(this).children('TimeStamp').children('when').text();
+					position.date=new Date(dateRaw);
+					var dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+
+					valid=true;
+				}
+			}
+			else if (isMyMaps==true)
+			{
+				// KML Google My Maps
+				position.x=parseFloat(this[0]);
+				position.y=parseFloat(this[1]);
+				position.z=parseFloat(this[2]);
+
+				position.date=new Date();
+				position.title=this[3]+' - Height: '+position.z.toFixed(0)+'m';
+
+				valid=true;
+			}
+			else
+			{
+				// KML v1
+				// this is 'when'
+				// coordinates are then coords
+				var values=$($(coordinates)[index]).text().split(' ');
+				if (values.length==3)
+				{
+					position.x=parseFloat(values[0]);
+					position.y=parseFloat(values[1]);
+					position.z=parseFloat(values[2]);
+
+					position.date=new Date($(this).text());
+					var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+
+					valid=true;
+				}
+			}
+			if (valid==true)
+			{
+				positions.push(position);
+			}
+
+			index++;
+		});
+
+		return positions;
+	}
+
 	// create a 2D marker
 	function _create2DMarker(map,date,position,title)
 	{
@@ -293,44 +467,25 @@ var trackViewer=(function()
 	function _load2D(data)
 	{
 		var center;
-		var userLang=navigator.language || navigator.userLanguage;
 		var map=new google.maps.Map(document.getElementById('container'),{ zoom:7, gestureHandling: 'greedy' });
 
 		_dots=[];
 
 		_lastDate=0;
 
-		// tcx format
-		$(data).find('Track').children().each(function(index)
+		// create 2d marker for all positions
+		var positions=_parseTrack(data);
+		$(positions).each(function()
 		{
-			var date=new Date($(this).children('Time').text());
-			var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+			var position={lat:this.y, lng:this.x};
 
-			var title=dateString+' - Height: '+parseFloat($(this).children('AltitudeMeters').text()).toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
-			var position={lat:parseFloat($(this).children('Position').children('LatitudeDegrees').text()), lng:parseFloat($(this).children('Position').children('LongitudeDegrees').text())};
-
-			_create2DMarker(map,date,position,title);
+			_create2DMarker(map,this.date,position,this.title);
 
 			if (center===undefined)
 				center=position;
 		});
-
-		// gpx format
-		$(data).find('trk').find('trkseg').children().each(function(index)
-		{
-			var date=new Date($(this).children('time').text());
-			var dateString=luxon.DateTime.fromISO($(this).children('time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-
-			var title=dateString+' - Height: '+parseFloat($(this).children('ele').text()).toFixed(0)+'m';
-			var position={lat:parseFloat($(this)[0].attributes.lat.value), lng:parseFloat($(this)[0].attributes.lon.value)};
-
-			_create2DMarker(map,date,position,title);
-
-			if (center===undefined)
-				center=position;
-		});
-
-		// kml format
+/*
+		// kml v1 format
 		var coordinates=$(data).find('gx\\:coord');
 		var index=0;
 		$(data).find('when').each(function()
@@ -340,12 +495,6 @@ var trackViewer=(function()
 
 			// format 1
 			var values=$($(coordinates)[index]).text().split(' ');
-			if (values.length!=3)
-			{
-				// format 2
-				values=$(this).parent().parent().children('Point').children('coordinates').text().split(',');
-			}
-
 			if (values.length==3)
 			{
 				var title=dateString+' - Height: '+parseFloat(values[2]).toFixed(0)+'m';
@@ -359,29 +508,7 @@ var trackViewer=(function()
 
 			index++;
 		});
-
-		// kml my maps format
-		var date=new Date();
-		$(data).find('LineString').find('coordinates').each(function()
-		{
-			var name=$(this).parent().parent().children('name').text();
-			var values=$(this).text().split(' ');
-			$(values).each(function()
-			{
-				var parts=this.split(',');
-				if (parts.length==3)
-				{
-					var title=name+' - Height: '+parseFloat(parts[2]).toFixed(0)+'m';
-					var position={lat:parseFloat(parts[1]), lng:parseFloat(parts[0])};
-
-					// since we don't have a date, show always all dots
-					_create2DMarker(map,date,position,title,((_settings.style!=trackViewer.style2DOneRecordPerMinute)?_settings.style:trackViewer.style2DAllRecords));
-		
-					if (center===undefined)
-						center=position;
-				}
-			});
-		});
+*/
 
 		// create line
 		if (_settings.useLines==true)
@@ -418,175 +545,78 @@ var trackViewer=(function()
 
 		var material=new THREE.MeshLambertMaterial( { color:0xff0000, flatShading:true } );
 
-		// add all kml coordinates to our space
-		var nodes;
-		var isTCX=false;
-		var isGPX=false;
-		var isKML2=false;
-		var isMyMaps=false;
-
-		nodes=$(data).find('coord');
-		if (nodes.length==0)
+		// add all coordinates to our space
+		var positions=_parseTrack(data);
+		$(positions).each(function()
 		{
-			nodes=$(data).find('gx\\:coord');
-			if (nodes.length==0)
+			if (initial==true)
 			{
-				var nodesCoordinates=$(data).find('LineString').find('coordinates');
-				if (nodesCoordinates.length>0)
+				// save start position as base
+				_base=this;
+				initial=false;
+	
+				// add earth surface
+				var earthSize=300;
+				var maptype=null;
+				var planeMaterial=null;
+				var planeGeometry=new THREE.PlaneBufferGeometry(earthSize,earthSize);
+				THREE.ImageUtils.crossOrigin='';
+				if (_settings.style==trackViewer.style3DStreetMap)
+					maptype='roadmap';
+				else if (_settings.style==trackViewer.style3DSatellite)
+					maptype='satellite';
+				else if (_settings.style==trackViewer.style3DBlueBackground)
 				{
-					// kml my maps format
-					nodes=[];
-					$(nodesCoordinates).each(function()
-					{
-						$($(this).text().split(' ')).each(function()
-						{
-							nodes.push(this);
-						});
-					});
-					isMyMaps=true;
+					planeMaterial=new THREE.MeshPhongMaterial( { color: 0x0040F0, side: THREE.DoubleSide } );
 				}
-				else
+				if (maptype!=null)
 				{
-					nodes=$(data).find('Folder').children();
-					if (nodes.length>0)
-					{
-						isKML2=true;
-					}
-					else
-					{
-						nodes=$(data).find('trk').find('trkseg').children();
-						if (nodes.length>0)
-						{
-							isGPX=true;
-						}
-						else
-						{
-							nodes=$(data).find('Trackpoint');
-							isTCX=true;
-						}
-					}
+					var texture=THREE.ImageUtils.loadTexture(('http://maps.google.com/maps/api/staticmap?center='+_base.y+','+_base.x+'&zoom=8&size=640x640&maptype='+maptype+'&scale=2&key='+_settings.googleMapsKey),undefined,function() { _render3D(); });
+					texture.minFilter=THREE.LinearFilter;
+					planeMaterial=new THREE.MeshPhongMaterial( { map: texture, side: THREE.DoubleSide } );
+				}
+				if (planeMaterial!=null)
+				{
+					_plane=new THREE.Mesh(planeGeometry,planeMaterial);
+					_scene.add(_plane);
 				}
 			}
-		}
-		$(nodes).each(function()
-		{
-			var position=new Object();
-			var valid=false;
-
-			if (isTCX==true)
+	
+			var mesh=new THREE.Mesh(geometry,material);
+	
+			if (_settings.useDots==true)
 			{
-				position.x=$(this).children('Position').children('LongitudeDegrees').text();
-				position.y=$(this).children('Position').children('LatitudeDegrees').text();
-				position.z=$(this).children('AltitudeMeters').text();
-				valid=true;
-			}
-			else if (isGPX==true)
-			{
-				position.x=$(this)[0].attributes.lon.value;
-				position.y=$(this)[0].attributes.lat.value;
-				position.z=$(this).children('ele').text();
-				valid=true;
-			}
-			else if (isKML2==true)
-			{
-				var values=$(this).children('Point').children('coordinates').text().split(',');
-				position.x=values[0];
-				position.y=values[1];
-				position.z=values[2];
-				if (values.length==3)
-					valid=true;
-			}
-			else if (isMyMaps==true)
-			{
-				var parts=this.split(",");
-				if (parts.length==3)
-				{
-					position.x=parseFloat(parts[0]);
-					position.y=parseFloat(parts[1]);
-					position.z=parseFloat(parts[2]);
-					valid=true;
-				}
+				// create dot
+				mesh.position.x=(this.x-_base.x)*100;
+				mesh.position.y=(this.y-_base.y)*100;
+				mesh.position.z=(this.z-_base.z)/120;
 			}
 			else
 			{
-				var values=$(this).text().split(' ');
-				position.x=values[0];
-				position.y=values[1];
-				position.z=values[2];
-				if (values.length==3)
-					valid=true;
+				// create cylinder
+				var height=(this.z-_base.z)/120;
+				var z=0;
+				if (height<0)
+				{
+					// if height is below 0, move cylinder down
+					height=-height;
+					z=-height;
+				}
+				else if (height==0)
+					height=0.0001;
+	
+				// rotate up
+				mesh.rotateOnAxis((new THREE.Vector3(1,0,0)).normalize(),(Math.PI/2));
+				// set height
+				mesh.scale.y=height;
+				mesh.position.x=(this.x-_base.x)*100;
+				mesh.position.y=(this.y-_base.y)*100;
+				mesh.position.z=(height/2)+z+0.04;				// move the cylinder a little bit up to prevent drawing errors
 			}
-			if (valid==true)
-			{
-				if (initial==true)
-				{
-					// save start position as base
-					_base=position;
-					initial=false;
-		
-					// add earth surface
-					var earthSize=300;
-					var maptype=null;
-					var planeMaterial=null;
-					var planeGeometry=new THREE.PlaneBufferGeometry(earthSize,earthSize);
-					THREE.ImageUtils.crossOrigin='';
-					if (_settings.style==trackViewer.style3DStreetMap)
-						maptype='roadmap';
-					else if (_settings.style==trackViewer.style3DSatellite)
-						maptype='satellite';
-					else if (_settings.style==trackViewer.style3DBlueBackground)
-					{
-						planeMaterial=new THREE.MeshPhongMaterial( { color: 0x0040F0, side: THREE.DoubleSide } );
-					}
-					if (maptype!=null)
-					{
-						var texture=THREE.ImageUtils.loadTexture(('http://maps.google.com/maps/api/staticmap?center='+_base.y+','+_base.x+'&zoom=8&size=640x640&maptype='+maptype+'&scale=2&key='+_settings.googleMapsKey),undefined,function() { _render3D(); });
-						texture.minFilter=THREE.LinearFilter;
-						planeMaterial=new THREE.MeshPhongMaterial( { map: texture, side: THREE.DoubleSide } );
-					}
-					if (planeMaterial!=null)
-					{
-						_plane=new THREE.Mesh(planeGeometry,planeMaterial);
-						_scene.add(_plane);
-					}
-				}
-		
-				var mesh=new THREE.Mesh(geometry,material);
-		
-				if (_settings.useDots==true)
-				{
-					// create dot
-					mesh.position.x=(position.x-_base.x)*100;
-					mesh.position.y=(position.y-_base.y)*100;
-					mesh.position.z=(position.z-_base.z)/120;
-				}
-				else
-				{
-					// create cylinder
-					var height=(position.z-_base.z)/120;
-					var z=0;
-					if (height<0)
-					{
-						// if height is below 0, move cylinder down
-						height=-height;
-						z=-height;
-					}
-					else if (height==0)
-						height=0.0001;
-		
-					// rotate up
-					mesh.rotateOnAxis((new THREE.Vector3(1,0,0)).normalize(),(Math.PI/2));
-					// set height
-					mesh.scale.y=height;
-					mesh.position.x=(position.x-_base.x)*100;
-					mesh.position.y=(position.y-_base.y)*100;
-					mesh.position.z=(height/2)+z+0.04;				// move the cylinder a little bit up to prevent drawing errors
-				}
-		
-				mesh.updateMatrix();
-				mesh.matrixAutoUpdate=false;
-				_scene.add(mesh);
-			}
+	
+			mesh.updateMatrix();
+			mesh.matrixAutoUpdate=false;
+			_scene.add(mesh);
 		});
 
 		// create key/mouse handling
@@ -624,126 +654,29 @@ var trackViewer=(function()
 	// load track and display in 3D mapbox
 	function _load3DMapbox(data)
 	{
-		var initial=true;
-
-		// add all kml coordinates to data array
-		var nodes;
 		var dataPoints;
-		var isTCX=false;
-		var isGPX=false;
-		var isKML2=false;
-		var isMyMaps=false;
+		var initial=true;
 
 		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
 			dataPoints=[];
 		else
 			dataPoints=[ { 'path': [] } ];
 
-		nodes=$(data).find('coord');
-		if (nodes.length==0)
+		// add all coordinates to data array
+		var positions=_parseTrack(data);
+		$(positions).each(function()
 		{
-			nodes=$(data).find('gx\\:coord');
-			if (nodes.length==0)
+			if (initial==true)
 			{
-				var nodesCoordinates=$(data).find('LineString').find('coordinates');
-				if (nodesCoordinates.length>0)
-				{
-					// kml my maps format
-					nodes=[];
-					$(nodesCoordinates).each(function()
-					{
-						$($(this).text().split(' ')).each(function()
-						{
-							nodes.push(this);
-						});
-					});
-					isMyMaps=true;
-				}
-				else
-				{
-					nodes=$(data).find('Folder').children();
-					if (nodes.length>0)
-					{
-						isKML2=true;
-					}
-					else
-					{
-						nodes=$(data).find('trk').find('trkseg').children();
-						if (nodes.length>0)
-						{
-							isGPX=true;
-						}
-						else
-						{
-							nodes=$(data).find('Trackpoint');
-							isTCX=true;
-						}
-					}
-				}
+				// save start position as base
+				_base=this;
+				initial=false;
 			}
-		}
-		$(nodes).each(function()
-		{
-			var position=new Object();
-			var valid=false;
 
-			if (isTCX==true)
-			{
-				position.x=$(this).children('Position').children('LongitudeDegrees').text();
-				position.y=$(this).children('Position').children('LatitudeDegrees').text();
-				position.z=$(this).children('AltitudeMeters').text();
-				valid=true;
-			}
-			else if (isGPX==true)
-			{
-				position.x=$(this)[0].attributes.lon.value;
-				position.y=$(this)[0].attributes.lat.value;
-				position.z=$(this).children('ele').text();
-				valid=true;
-			}
-			else if (isKML2==true)
-			{
-				var values=$(this).children('Point').children('coordinates').text().split(',');
-				position.x=values[0];
-				position.y=values[1];
-				position.z=values[2];
-				if (values.length==3)
-					valid=true;
-			}
-			else if (isMyMaps==true)
-			{
-				var parts=this.split(",");
-				if (parts.length==3)
-				{
-					position.x=parseFloat(parts[0]);
-					position.y=parseFloat(parts[1]);
-					position.z=parseFloat(parts[2]);
-					valid=true;
-				}
-			}
+			if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+				dataPoints.push([parseFloat(this.x), parseFloat(this.y)]);
 			else
-			{
-				var values=$(this).text().split(' ');
-				position.x=values[0];
-				position.y=values[1];
-				position.z=values[2];
-				if (values.length==3)
-					valid=true;
-			}
-			if (valid==true)
-			{
-				if (initial==true)
-				{
-					// save start position as base
-					_base=position;
-					initial=false;
-				}
-
-				if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
-					dataPoints.push([parseFloat(position.x), parseFloat(position.y)]);
-				else
-					dataPoints[0].path.push([parseFloat(position.x), parseFloat(position.y), parseFloat(position.z)*10]);
-			}
+				dataPoints[0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
 		});
 
 		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
