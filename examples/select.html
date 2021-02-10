@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+
+		<style>
+			body
+			{
+				margin: 0;
+			}
+			#container
+			{
+				z-index: 1;
+			}
+			#fullscreen_control
+			{
+				display: none;
+				clear: both;
+				float: right;
+				top: 28px;
+				right: 40px;
+				position: relative;
+				width: 16px;
+				height: 16px;
+				cursor: pointer;
+				background-image: url("images/fullscreen.png");
+				z-index: 100;
+			}
+			#fullscreen_control.fullscreen
+			{
+				z-index: 1000;
+				position: absolute !important;
+				top: 10px !important;
+				right: 10px !important;
+				background-image: url("images/fullscreen_exit.png") !important;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+
+		<form>
+			<div>
+				<label for="file">File:</label>
+				<div>
+					<div>
+						<input type="file" name="file" id="file" />
+						<label for="file">Choose KMZ/KML/GPX/TCX file</label>
+					</div>
+				</div>
+			</div>
+			<div>
+				<label for="style">Type:</label>
+				<div>
+					<select name="style" id="style">
+						<option value="4">2D - All Records</option>
+						<option value="5">2D - One Record per Minute</option>
+						<option value="6">3D - Mapbox - Street Map</option>
+						<option value="7">3D - Mapbox - Satellite</option>
+						<option value="0">3D - Google Maps - Street Map</option>
+						<option value="1">3D - Google Maps - Satellite</option>
+						<option value="2">3D - Blue Background</option>
+						<option value="3">3D - No Background</option>
+					</select>
+				</div>
+			</div>
+			<div class="style-2d">
+				<label for="lines">2D Style:</label>
+				<div>
+					<select name="lines" id="lines">
+						<option value="0">No Connecting Lines</option>
+						<option value="1">Connect Points with Line</option>
+					</select>
+				</div>
+			</div>
+			<div class="style-3d" style="display: none !important">
+				<label for="dots">3D Style:</label>
+				<div>
+					<select name="dots" id="dots">
+						<option value="0">Bars</option>
+						<option value="1">Dots</option>
+					</select>
+				</div>
+			</div>
+			<div class="style-3dmapbox" style="display: none !important">
+				<label for="dots">3D Style:</label>
+				<div>
+					<select name="elevation" id="elevation">
+						<option value="2">With Elevation from Map</option>
+						<option value="1">With Elevation from File</option>
+						<option value="0">Without Elevation</option>
+					</select>
+				</div>
+			</div>
+			<div>
+				<div>
+					<button id="load">Load</button>
+				</div>
+			</div>
+		</form>
+
+		<div style="width: 20rem; display: none" id="help">
+			<table>
+				<tr>
+					<td>&#x21D4; / &#x21D5;</td><td>Move</td>
+				</tr>
+				<tr>
+					<td>Shift + &#x21D5;</td><td>3D Tilt</td>
+				</tr>
+				<tr>
+					<td>Shift + &#x21D4;</td><td>3D Rotate</td>
+				</tr>
+				<tr>
+					<td>Control + &#x21D5;</td><td>3D Zoom</td>
+				</tr>
+				<tr>
+					<td>Control + &#x21D4;</td><td>3D Resize map to fit track</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="info">
+			info
+		</div>
+
+		<div id="fullscreen_control"></div>
+
+		<div id="container" style="display: inline;"></div>
+
+		<link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" />
+		<script src="https://maps.googleapis.com/maps/api/js?key=***KEY***"></script>
+		<script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
+		<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+		<script src="../libs/jquery/jquery-3.3.1.min.js"></script>
+		<script src="../libs/three/three.min.js"></script>
+		<script src="../libs/three/OrbitControls.js"></script>
+		<script src="../libs/zip/zip.js"></script>
+		<script src="../libs/luxon/luxon.min.js"></script>
+		<script src="../src/track_viewer.js"></script>
+
+		<script>
+
+			function updateStyle()
+			{
+				var style=$('#style').val();
+
+				if ((style==trackViewer.style2DAllRecords) || (style==trackViewer.style2DOneRecordPerMinute))
+				{
+					$('.style-2d').css('display','flex');
+					$('.style-3d').css('display','none');
+					$('.style-3dmapbox').css('display','none');
+					$('#help').css('display','none');
+				}
+				else if ((style==trackViewer.style3DMapboxStreetMap) || (style==trackViewer.style3DMapboxSatellite))
+				{
+					$('.style-2d').css('display','none');
+					$('.style-3d').css('display','none');
+					$('.style-3dmapbox').css('display','flex');
+					$('#help').css('display','none');
+				}
+				else
+				{
+					$('.style-2d').css('display','none');
+					$('.style-3d').css('display','flex');
+					$('.style-3dmapbox').css('display','none');
+					$('#help').css('display','block');
+				}
+			}
+
+			$(function()
+			{
+				$('#file').change(function(e)
+				{
+					if (e.target.files.length==0)
+						$(e.target).next().html('');
+					else
+						$(e.target).next().html(e.target.files[0].name);
+				});
+
+				$('#load').click(function()
+				{
+					var input=$('#file')[0];
+					var inputFiles=$(input.files);
+					if ((inputFiles==undefined) || (inputFiles.length==0))
+						return false;
+					inputFile=inputFiles[0];
+
+					trackViewer.load(inputFile,{	style: $('#style').val(),
+															elevation: $('#elevation').val(),
+															useLines: $('#lines').val(),
+															useDots: $('#dots').val()
+														});
+
+					return false;
+				});
+
+				$('#style').change(function()
+				{
+					updateStyle();
+				});
+				$("#style").val("7");
+				updateStyle();
+
+				trackViewer.init(	{	mapBoxAccessToken: '***KEY***',
+											googleMapsKey: '***KEY***',
+											domContainer: $('#container')[0],
+											domFullScreenControl: $('#fullscreen_control')[0],
+											domInfo: $('#info')[0],
+											dotImageLight: 'images/dotlight.png',
+											dotImageHeavy: 'images/dotheavy.png',
+										});
+			});
+
+		</script>
+
+	</body>
+</html>

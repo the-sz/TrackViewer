@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+
+		<style>
+			body
+			{
+				margin: 0;
+			}
+		</style>
+
+	</head>
+
+	<body>
+
+		<div id="container"></div>
+
+		<link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" />
+		<script src="https://maps.googleapis.com/maps/api/js?key=***KEY***"></script>
+		<script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
+		<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+		<script src="../libs/jquery/jquery-3.3.1.min.js"></script>
+		<script src="../libs/three/three.min.js"></script>
+		<script src="../libs/three/OrbitControls.js"></script>
+		<script src="../libs/zip/zip.js"></script>
+		<script src="../libs/luxon/luxon.min.js"></script>
+		<script src="../src/track_viewer.js"></script>
+
+		<script>
+
+			$(function()
+			{
+				trackViewer.init(	{	mapBoxAccessToken: '***KEY***',
+											googleMapsKey: '***KEY***',
+											domContainer: $('#container')[0],
+											dotImageLight: 'images/dotlight.png',
+											dotImageHeavy: 'images/dotheavy.png',
+											spacingRight: 0,
+										});
+
+				trackViewer.load('http://the-sz.com/tmp/1.gpx',{	style: trackViewer.style3DMapboxStreetMap,
+																					elevation: trackViewer.elevationFromMap,
+																					useLines: true,
+																					useDots: false
+																				});
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "trackviewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=lcov mocha tests/",
+    "codecov": "codecov"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^8.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.0",
+    "expect.js": "^0.3.1",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.4.0",
+    "nyc": "^15.1.0",
+    "sinon": "^9.2.4"
+  }
+}
