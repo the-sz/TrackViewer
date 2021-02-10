@@ -82,3 +82,6 @@ Color of the connecting line in 2D style if `useLines: true`.
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromMap` or `elevation: trackViewer.elevationNone`.
 ### lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255]
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
+
+## License
+[GNU General Public License v3.0](LICENSE.md)
