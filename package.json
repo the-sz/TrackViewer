@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=lcov mocha tests/",
-    "codecov": "codecov"
+    "test": "nyc --reporter=lcov --include src/* mocha tests/",
+    "codecov": "codecov --disable=gcov -t bc92828b-44f5-4adc-adaf-fd2f67005dda"
   },
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "mocha": "^8.2.1"
   },
