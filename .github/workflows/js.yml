@@ -29,4 +29,4 @@ jobs:
         with:
           token: ${{ secrets.token }}
           release-type: node
-          package-name: foo
+          package-name: foobar
