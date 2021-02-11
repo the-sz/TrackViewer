@@ -182,7 +182,7 @@ describe('Load()',function()
 	{
 		var stub=null;
 
-		_this.timeout(20*1000);
+		_this.timeout(30*1000);
 
 		global.navigator={ language: 'en' };
 
@@ -211,7 +211,7 @@ describe('Load()',function()
 
 	function test3D(_this,file,count,positions,done)
 	{
-		_this.timeout(20*1000);
+		_this.timeout(30*1000);
 
 		var fileContent=fs.readFileSync(file);
 
@@ -239,7 +239,7 @@ describe('Load()',function()
 
 	function test3DMapBox(_this,file,count,coordinates,done)
 	{
-		_this.timeout(20*1000);
+		_this.timeout(30*1000);
 
 		var fileContent=fs.readFileSync(file);
 
@@ -296,13 +296,13 @@ describe('Load()',function()
 								coordinates: [[13.69201667,50.77527167],[13.69196866,50.77523138]],
 								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.004800999999865496, y: -0.004029000000116412, z: 0.03833333333333343 }, { x: -0.0006389999999356633, y: -0.011080000000163182, z: 0.03875000000000019 }]
 							},
-/*
-							{	file: __dirname+'/test1.kmz',			// zipped KML Google My Maps
-								count: 39777,
-								coordinates: [[-80.28405, 25.80854],[-80.2841, 25.80854]],
-								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.004800999999865496, y: -0.004029000000116412, z: 0.03833333333333343 }, { x: -0.0006389999999356633, y: -0.011080000000163182, z: 0.03875000000000019 }]
+
+							{	file: __dirname+'/test1.kmz',			// zipped KML v1
+								count: 2382,
+								coordinates: [[11.450203, 50.290867],[11.450252, 50.290768]],
+								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: 0.004900000000063187, y: -0.009899999999873899, z: 43.32256825 }, { x: 0.00809999999997757, y: -0.014900000000039881, z: 43.32256825 }]
 							},
-*/							
+							
 							{	file: __dirname+'/test2.kmz',			// zipped KML Google My Maps
 								count: 39777,
 								coordinates: [[-80.28405, 25.80854],[-80.2841, 25.80854]],

@@ -63,7 +63,6 @@ var trackViewer=(function()
 		lineColor2D: '#0776FF',
 		lineColor3DMapBoxElevationFromMap: 'rgba(4, 117, 255, 1.0)',
 		lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255],
-		zipLibraryLocation: '../libs/zip/',
 	}
 
 	// init basics
