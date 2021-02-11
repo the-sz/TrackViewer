@@ -1,3 +1,9 @@
+![JS Tests](https://github.com/the-sz/TrackViewer/workflows/JS%20Build/badge.svg)
+&nbsp;
+[![codecov](https://codecov.io/gh/the-sz/TrackViewer/branch/master/graph/badge.svg?token=5XI6XLR02W)](https://codecov.io/gh/the-sz/TrackViewer)
+&nbsp;
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+
 # TrackViewer
 
 Visualize your KML, KMZ, GPX or TCX track in 3D and 2D. Rotate, Tilt and Zoom into your track.
@@ -85,3 +91,5 @@ Track color in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
 
 ## License
 [GNU General Public License v3.0](LICENSE.md)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fthe-sz%2FTrackViewer?ref=badge_shield)

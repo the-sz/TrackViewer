@@ -1,6 +1,6 @@
-name: JS Build
+name: JS Tests
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -23,6 +23,7 @@ jobs:
     - run: npm run codecov
 
   release-please:
+    name: Create Release PR
     runs-on: ubuntu-latest
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v2
