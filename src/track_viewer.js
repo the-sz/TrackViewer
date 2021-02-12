@@ -463,7 +463,7 @@ var trackViewer=(function()
 	function _load2D(data)
 	{
 		var center;
-		var map=new google.maps.Map(document.getElementById('container'),{ zoom:7, gestureHandling: 'greedy' });
+		var map=new google.maps.Map(_settings.domContainer,{ zoom:7, gestureHandling: 'greedy' });
 
 		_dots=[];
 
@@ -656,7 +656,7 @@ var trackViewer=(function()
 			mapboxgl.accessToken=_settings.mapBoxAccessToken;
 			var map=new mapboxgl.Map(
 			{
-				container: 'container',
+				container: _settings.domContainer,
 				zoom: 8,
 				center: [parseFloat(_base.x), parseFloat(_base.y)],
 				pitch: 50,

@@ -1,5 +1,6 @@
 ![JS Tests](https://github.com/the-sz/TrackViewer/workflows/JS%20Tests/badge.svg)
 [![codecov](https://codecov.io/gh/the-sz/TrackViewer/branch/master/graph/badge.svg?token=5XI6XLR02W)](https://codecov.io/gh/the-sz/TrackViewer)
+![GitHub all releases](https://img.shields.io/github/downloads/the-sz/TrackViewer/total)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 # TrackViewer
