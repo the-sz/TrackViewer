@@ -43,6 +43,11 @@ mapboxgl.FullscreenControl=class FullscreenControl
 {
 }
 
+mapboxgl.LngLatBounds=class LngLatBounds
+{
+	extend(array) { }
+}
+
 // create google
 global.google={ };
 global.google.maps={ };
