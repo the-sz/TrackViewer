@@ -626,6 +626,7 @@ var trackViewer=(function()
 	function _load3DMapbox(data)
 	{
 		var dataPoints;
+		var bounds;
 		var initial=true;
 
 		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
@@ -642,18 +643,23 @@ var trackViewer=(function()
 				// save start position as base
 				_base=this;
 				initial=false;
+
+				bounds=new mapboxgl.LngLatBounds([parseFloat(this.x), parseFloat(this.y)],[parseFloat(this.x), parseFloat(this.y)]);
 			}
 
 			if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
 				dataPoints.push([parseFloat(this.x), parseFloat(this.y)]);
 			else
 				dataPoints[0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
+
+			bounds.extend([parseFloat(this.x), parseFloat(this.y)]);
 		});
 
 		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
 		{
 			// mapbox
 			mapboxgl.accessToken=_settings.mapBoxAccessToken;
+
 			var map=new mapboxgl.Map(
 			{
 				container: _settings.domContainer,
@@ -661,6 +667,8 @@ var trackViewer=(function()
 				center: [parseFloat(_base.x), parseFloat(_base.y)],
 				pitch: 50,
 				bearing: 0,
+				bounds: bounds,
+				fitBoundsOptions: { padding: -30 },
 				style: (_settings.style==trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
 			});
 
