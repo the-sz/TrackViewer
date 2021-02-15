@@ -302,7 +302,7 @@ var trackViewer=(function()
 				nodes=[];
 				$(nodesCoordinates).each(function()
 				{
-					var name=$(this).parent().parent().children('name').text();
+					var name=escape($(this).parent().parent().children('name').text());
 
 					$($(this).text().split(' ')).each(function()
 					{

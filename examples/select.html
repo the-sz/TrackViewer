@@ -185,7 +185,7 @@
 					var inputFiles=$(input.files);
 					if ((inputFiles==undefined) || (inputFiles.length==0))
 						return false;
-					inputFile=inputFiles[0];
+					var inputFile=inputFiles[0];
 
 					trackViewer.load(inputFile,{	style: $('#style').val(),
 															elevation: $('#elevation').val(),
