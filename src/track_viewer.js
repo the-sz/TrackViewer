@@ -307,7 +307,7 @@ var trackViewer=(function()
 				{
 					var name=escape($(this).parent().parent().children('name').text());
 
-					$($(this).text().split(' ')).each(function()
+					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
 						var parts=this.split(",");
 						if (parts.length==3)
