@@ -53,7 +53,7 @@ var trackViewer=(function()
 		domHeader: null,
 		domFullScreenControl: null,
 		domInfo: null,
-		spacingRight: 25,
+		spacingRight: 5,
 		dotImageLight: 'dotlight.png',
 		dotImageLightAnchorX: 8,
 		dotImageLightAnchorY: 8,
@@ -259,6 +259,8 @@ var trackViewer=(function()
 			$(_settings.domFullScreenControl).css('display','block');
 			_load3D(data);
 		}
+
+		_onWindowResize();
 	}
 
 	// convert all suppored track formats into one position list
