@@ -267,13 +267,14 @@ var trackViewer=(function()
 	function _parseTrack(data)
 	{
 		var nodes;
-		var positions=[];
+		var tracks=[];
+		var allPositions=[];
 		var isTCX=false;
 		var isGPX=false;
 		var isKML2=false;
 		var isMyMaps=false;
 		var userLang=navigator.language || navigator.userLanguage;
-		var coordinates=null;
+		var coordinates=[];
 
 		for (;;)
 		{
@@ -281,9 +282,9 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// KML v1
-				coordinates=nodes;
-				nodes=$(data).find('when');
 				//console.log("KML v1");
+				coordinates.push(nodes);
+				tracks.push($(data).find('when'));
 				break;
 			}
 
@@ -291,9 +292,9 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// KML v1
-				coordinates=nodes;
-				nodes=$(data).find('when');
 				//console.log("KML v1");
+				coordinates.push(nodes);
+				tracks.push($(data).find('when'));
 				break;
 			}
 
@@ -317,6 +318,7 @@ var trackViewer=(function()
 					});
 				});
 				//console.log("KML Google My Maps");
+				tracks.push(nodes);
 				isMyMaps=true;
 				break;
 			}
@@ -326,15 +328,20 @@ var trackViewer=(function()
 			{
 				// KML v2
 				//console.log("KML v2");
+				tracks.push(nodes);
 				isKML2=true;
 				break;
 			}
 
-			nodes=$(data).find('trk').find('trkseg').children();
+			nodes=$(data).find('trk');
 			if (nodes.length>0)
 			{
 				// GPX
 				//console.log("GPX");
+				$(nodes).each(function()
+				{
+					tracks.push($(this).find('trkseg').children());
+				});
 				isGPX=true;
 				break;
 			}
@@ -344,6 +351,7 @@ var trackViewer=(function()
 			{
 				// TCX
 				//console.log("TCX");
+				tracks.push(nodes);
 				isTCX=true;
 				break;
 			}
@@ -351,96 +359,114 @@ var trackViewer=(function()
 			break;
 		}
 
-		var index=0;
-		$(nodes).each(function()
+		var track=0;
+		$(tracks).each(function()
 		{
-			var position={};
-			var valid=false;
-
-			if (isTCX==true)
+			var index=0;
+			var positions=[];
+			$(this).each(function()
 			{
-				// TCX
-				position.x=parseFloat($(this).children('Position').children('LongitudeDegrees').text());
-				position.y=parseFloat($(this).children('Position').children('LatitudeDegrees').text());
-				position.z=parseFloat($(this).children('AltitudeMeters').text());
+				var position={};
+				var valid=false;
 
-				position.date=new Date($(this).children('Time').text());
-				var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-				position.title=dateString+' - Height: '+position.z.toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
-
-				valid=true;
-			}
-			else if (isGPX==true)
-			{
-				// GPX
-				position.x=parseFloat($(this)[0].attributes.lon.value);
-				position.y=parseFloat($(this)[0].attributes.lat.value);
-				position.z=parseFloat($(this).children('ele').text());
-
-				position.date=new Date($(this).children('time').text());
-				var dateString=luxon.DateTime.fromISO($(this).children('time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-				position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
-	
-				valid=true;
-			}
-			else if (isKML2==true)
-			{
-				// KML v2
-				var values=$(this).children('Point').children('coordinates').text().split(',');
-				if (values.length==3)
+				if (isTCX==true)
 				{
-					position.x=parseFloat(values[0]);
-					position.y=parseFloat(values[1]);
-					position.z=parseFloat(values[2]);
+					// TCX
+					position.x=parseFloat($(this).children('Position').children('LongitudeDegrees').text());
+					position.y=parseFloat($(this).children('Position').children('LatitudeDegrees').text());
+					position.z=parseFloat($(this).children('AltitudeMeters').text());
 
-					var dateRaw=$(this).children('TimeStamp').children('when').text();
-					position.date=new Date(dateRaw);
-					var dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+					position.date=new Date($(this).children('Time').text());
+					var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
 
 					valid=true;
 				}
-			}
-			else if (isMyMaps==true)
-			{
-				// KML Google My Maps
-				position.x=parseFloat(this[0]);
-				position.y=parseFloat(this[1]);
-				position.z=parseFloat(this[2]);
-
-				position.date=new Date();
-				position.title=this[3]+' - Height: '+position.z.toFixed(0)+'m';
-
-				valid=true;
-			}
-			else
-			{
-				// KML v1
-				// this is 'when'
-				// coordinates are then coords
-				var values=$($(coordinates)[index]).text().split(' ');
-				if (values.length==3)
+				else if (isGPX==true)
 				{
-					position.x=parseFloat(values[0]);
-					position.y=parseFloat(values[1]);
-					position.z=parseFloat(values[2]);
+					// GPX
+					position.x=parseFloat($(this)[0].attributes.lon.value);
+					position.y=parseFloat($(this)[0].attributes.lat.value);
+					position.z=parseFloat($(this).children('ele').text());
 
-					position.date=new Date($(this).text());
-					var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+					var date=$(this).children('time').text();
+					if (date!='')
+					{
+						position.date=new Date(date);
+						var dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+					}
+					else
+					{
+						position.date=new Date();
+						position.title='Height: '+position.z.toFixed(0)+'m';
+					}
+		
+					valid=true;
+				}
+				else if (isKML2==true)
+				{
+					// KML v2
+					var values=$(this).children('Point').children('coordinates').text().split(',');
+					if (values.length==3)
+					{
+						position.x=parseFloat(values[0]);
+						position.y=parseFloat(values[1]);
+						position.z=parseFloat(values[2]);
+
+						var dateRaw=$(this).children('TimeStamp').children('when').text();
+						position.date=new Date(dateRaw);
+						var dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+
+						valid=true;
+					}
+				}
+				else if (isMyMaps==true)
+				{
+					// KML Google My Maps
+					position.x=parseFloat(this[0]);
+					position.y=parseFloat(this[1]);
+					position.z=parseFloat(this[2]);
+
+					position.date=new Date();
+					position.title=this[3]+' - Height: '+position.z.toFixed(0)+'m';
 
 					valid=true;
 				}
-			}
-			if (valid==true)
-			{
-				positions.push(position);
-			}
+				else
+				{
+					// KML v1
+					// this is 'when'
+					// coordinates are then coords
+					var values=$($(coordinates[track])[index]).text().split(' ');
+					if (values.length==3)
+					{
+						position.x=parseFloat(values[0]);
+						position.y=parseFloat(values[1]);
+						position.z=parseFloat(values[2]);
 
-			index++;
+						position.date=new Date($(this).text());
+						var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
+
+						valid=true;
+					}
+				}
+				if (valid==true)
+				{
+					positions.push(position);
+				}
+
+				index++;
+			});
+
+			allPositions.push(positions);
+
+			track++;
 		});
 
-		return positions;
+		return allPositions;
 	}
 
 	// create a 2D marker
@@ -467,25 +493,27 @@ var trackViewer=(function()
 		var center;
 		var map=new google.maps.Map(_settings.domContainer,{ zoom:7, gestureHandling: 'greedy' });
 
-		_dots=[];
-
 		_lastDate=0;
 
 		// create 2d marker for all positions
 		var positions=_parseTrack(data);
 		$(positions).each(function()
 		{
-			var position={lat:this.y, lng:this.x};
+			_dots=[];
+			$(this).each(function()
+			{
+				var position={lat:this.y, lng:this.x};
 
-			_create2DMarker(map,this.date,position,this.title);
+				_create2DMarker(map,this.date,position,this.title);
 
-			if (center===undefined)
-				center=position;
+				if (center===undefined)
+					center=position;
+			});
+
+			// create line
+			if (_settings.useLines==true)
+				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
-
-		// create line
-		if (_settings.useLines==true)
-			new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 
 		if (center!==undefined)
 			map.setCenter(center);
@@ -522,74 +550,77 @@ var trackViewer=(function()
 		var positions=_parseTrack(data);
 		$(positions).each(function()
 		{
-			if (initial==true)
+			$(this).each(function()
 			{
-				// save start position as base
-				_base=this;
-				initial=false;
-	
-				// add earth surface
-				var earthSize=300;
-				var maptype=null;
-				var planeMaterial=null;
-				var planeGeometry=new THREE.PlaneBufferGeometry(earthSize,earthSize);
-				THREE.ImageUtils.crossOrigin='';
-				if (_settings.style==trackViewer.style3DStreetMap)
-					maptype='roadmap';
-				else if (_settings.style==trackViewer.style3DSatellite)
-					maptype='satellite';
-				else if (_settings.style==trackViewer.style3DBlueBackground)
+				if (initial==true)
 				{
-					planeMaterial=new THREE.MeshPhongMaterial( { color: 0x0040F0, side: THREE.DoubleSide } );
+					// save start position as base
+					_base=this;
+					initial=false;
+		
+					// add earth surface
+					var earthSize=300;
+					var maptype=null;
+					var planeMaterial=null;
+					var planeGeometry=new THREE.PlaneBufferGeometry(earthSize,earthSize);
+					THREE.ImageUtils.crossOrigin='';
+					if (_settings.style==trackViewer.style3DStreetMap)
+						maptype='roadmap';
+					else if (_settings.style==trackViewer.style3DSatellite)
+						maptype='satellite';
+					else if (_settings.style==trackViewer.style3DBlueBackground)
+					{
+						planeMaterial=new THREE.MeshPhongMaterial( { color: 0x0040F0, side: THREE.DoubleSide } );
+					}
+					if (maptype!=null)
+					{
+						var texture=THREE.ImageUtils.loadTexture(('http://maps.google.com/maps/api/staticmap?center='+_base.y+','+_base.x+'&zoom=8&size=640x640&maptype='+maptype+'&scale=2&key='+_settings.googleMapsKey),undefined,function() { _render3D(); });
+						texture.minFilter=THREE.LinearFilter;
+						planeMaterial=new THREE.MeshPhongMaterial( { map: texture, side: THREE.DoubleSide } );
+					}
+					if (planeMaterial!=null)
+					{
+						_plane=new THREE.Mesh(planeGeometry,planeMaterial);
+						_scene.add(_plane);
+					}
 				}
-				if (maptype!=null)
+		
+				var mesh=new THREE.Mesh(geometry,material);
+		
+				if (_settings.useDots==true)
 				{
-					var texture=THREE.ImageUtils.loadTexture(('http://maps.google.com/maps/api/staticmap?center='+_base.y+','+_base.x+'&zoom=8&size=640x640&maptype='+maptype+'&scale=2&key='+_settings.googleMapsKey),undefined,function() { _render3D(); });
-					texture.minFilter=THREE.LinearFilter;
-					planeMaterial=new THREE.MeshPhongMaterial( { map: texture, side: THREE.DoubleSide } );
+					// create dot
+					mesh.position.x=(this.x-_base.x)*100;
+					mesh.position.y=(this.y-_base.y)*100;
+					mesh.position.z=(this.z-_base.z)/120;
 				}
-				if (planeMaterial!=null)
+				else
 				{
-					_plane=new THREE.Mesh(planeGeometry,planeMaterial);
-					_scene.add(_plane);
+					// create cylinder
+					var height=(this.z-_base.z)/120;
+					var z=0;
+					if (height<0)
+					{
+						// if height is below 0, move cylinder down
+						height=-height;
+						z=-height;
+					}
+					else if (height==0)
+						height=0.0001;
+		
+					// rotate up
+					mesh.rotateOnAxis((new THREE.Vector3(1,0,0)).normalize(),(Math.PI/2));
+					// set height
+					mesh.scale.y=height;
+					mesh.position.x=(this.x-_base.x)*100;
+					mesh.position.y=(this.y-_base.y)*100;
+					mesh.position.z=(height/2)+z+0.04;				// move the cylinder a little bit up to prevent drawing errors
 				}
-			}
-	
-			var mesh=new THREE.Mesh(geometry,material);
-	
-			if (_settings.useDots==true)
-			{
-				// create dot
-				mesh.position.x=(this.x-_base.x)*100;
-				mesh.position.y=(this.y-_base.y)*100;
-				mesh.position.z=(this.z-_base.z)/120;
-			}
-			else
-			{
-				// create cylinder
-				var height=(this.z-_base.z)/120;
-				var z=0;
-				if (height<0)
-				{
-					// if height is below 0, move cylinder down
-					height=-height;
-					z=-height;
-				}
-				else if (height==0)
-					height=0.0001;
-	
-				// rotate up
-				mesh.rotateOnAxis((new THREE.Vector3(1,0,0)).normalize(),(Math.PI/2));
-				// set height
-				mesh.scale.y=height;
-				mesh.position.x=(this.x-_base.x)*100;
-				mesh.position.y=(this.y-_base.y)*100;
-				mesh.position.z=(height/2)+z+0.04;				// move the cylinder a little bit up to prevent drawing errors
-			}
-	
-			mesh.updateMatrix();
-			mesh.matrixAutoUpdate=false;
-			_scene.add(mesh);
+		
+				mesh.updateMatrix();
+				mesh.matrixAutoUpdate=false;
+				_scene.add(mesh);
+			});
 		});
 
 		// create key/mouse handling
@@ -627,34 +658,41 @@ var trackViewer=(function()
 	// load track and display in 3D mapbox
 	function _load3DMapbox(data)
 	{
-		var dataPoints;
+		var dataPoints=[];
 		var bounds;
 		var initial=true;
-
-		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
-			dataPoints=[];
-		else
-			dataPoints=[ { 'path': [] } ];
+		var index;
 
 		// add all coordinates to data array
 		var positions=_parseTrack(data);
+		index=0;
 		$(positions).each(function()
 		{
-			if (initial==true)
-			{
-				// save start position as base
-				_base=this;
-				initial=false;
-
-				bounds=new mapboxgl.LngLatBounds([parseFloat(this.x), parseFloat(this.y)],[parseFloat(this.x), parseFloat(this.y)]);
-			}
-
 			if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
-				dataPoints.push([parseFloat(this.x), parseFloat(this.y)]);
+				dataPoints.push([]);
 			else
-				dataPoints[0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
+				dataPoints.push([ { 'path': [] } ]);
 
-			bounds.extend([parseFloat(this.x), parseFloat(this.y)]);
+			$(this).each(function()
+			{
+				if (initial==true)
+				{
+					// save start position as base
+					_base=this;
+					initial=false;
+
+					bounds=new mapboxgl.LngLatBounds([parseFloat(this.x), parseFloat(this.y)],[parseFloat(this.x), parseFloat(this.y)]);
+				}
+
+				if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+					dataPoints[index].push([parseFloat(this.x), parseFloat(this.y)]);
+				else
+					dataPoints[index][0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
+
+				bounds.extend([parseFloat(this.x), parseFloat(this.y)]);
+			});
+
+			index++;
 		});
 
 		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
@@ -670,7 +708,7 @@ var trackViewer=(function()
 				pitch: 50,
 				bearing: 0,
 				bounds: bounds,
-				fitBoundsOptions: { padding: -30 },
+				fitBoundsOptions: { padding: 0 },
 				style: (_settings.style==trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
 			});
 
@@ -703,35 +741,42 @@ var trackViewer=(function()
 					}
 				});
 
-				map.addSource('trace',
+				index=0;
+				$(dataPoints).each(function()
 				{
-					type: 'geojson',
-					data:
+					map.addSource('trace_'+index,
 					{
-						'type': 'Feature',
-						'properties': {},
-						'geometry': {
-						'type': 'LineString',
-						'coordinates': dataPoints
-					}
-					}
-				});
+						type: 'geojson',
+						data:
+						{
+							'type': 'Feature',
+							'properties': {},
+							'geometry':
+							{
+								'type': 'LineString',
+								'coordinates': this
+							}
+						}
+					});
 
-				map.addLayer(
-				{
-					type: 'line',
-					source: 'trace',
-					id: 'line',
-					paint:
+					map.addLayer(
 					{
-						'line-color': _settings.lineColor3DMapBoxElevationFromMap,
-						'line-width': 3
-					},
-					layout:
-					{
-						'line-cap': 'round',
-						'line-join': 'round'
-					}
+						type: 'line',
+						source: 'trace_'+index,
+						id: 'line_'+index,
+						paint:
+						{
+							'line-color': _settings.lineColor3DMapBoxElevationFromMap,
+							'line-width': 3
+						},
+						layout:
+						{
+							'line-cap': 'round',
+							'line-join': 'round'
+						}
+					});
+
+					index++;
 				});
 			});
 		}
@@ -739,6 +784,26 @@ var trackViewer=(function()
 		{
 			// mapbox using deck gl for elevation
 			const {DeckGL, PathLayer}=deck;
+
+			var layers=[];
+			index=0;
+			$(dataPoints).each(function()
+			{
+				layers.push(new PathLayer(
+					{
+						id: 'layer_'+index,
+						data: this,
+						billboard: true,
+						widthScale: 1,
+						widthMinPixels: 2,
+						widthMaxPixels: 10,
+						getColor: d => _settings.lineColor3DMapBoxElevationFromFile,
+						getWidth: d => 1,
+					}
+				));
+
+				index++;
+			});
 
 			new DeckGL(
 			{
@@ -755,19 +820,7 @@ var trackViewer=(function()
 					bearing: 0
 				},
 				controller: true,
-				layers:
-				[
-					new PathLayer(
-					{
-						data: dataPoints,
-						billboard: true,
-						widthScale: 1,
-						widthMinPixels: 2,
-						widthMaxPixels: 10,
-						getColor: d => _settings.lineColor3DMapBoxElevationFromFile,
-						getWidth: d => 1,
-					})
-				]
+				layers: layers,
 			});
 		}
 	}

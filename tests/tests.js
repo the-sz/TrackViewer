@@ -84,6 +84,7 @@ THREE.FogExp2=class FogExp2
 THREE.PerspectiveCamera=class PerspectiveCamera
 {
 	position={ set: function() { } }
+	updateProjectionMatrix() { }
 }
 THREE.Vector3=class Vector3
 {
@@ -197,7 +198,7 @@ describe('Load()',function()
 
 		stub=sinon.stub(global.jQuery,'ajax');
 
-		trackViewer.load(file,{ style: trackViewer.style2DAllRecords, domContainer:null });
+		trackViewer.load(file,{ style: trackViewer.style2DAllRecords, domContainer: $('<div></div>')[0] });
 
 		stub.yieldTo('success',fileContent);
 
@@ -252,7 +253,7 @@ describe('Load()',function()
 
 		var addSource=sinon.spy(mapboxgl.Map.prototype,'addSource');
 
-		trackViewer.load(file,{ style: trackViewer.style3DMapboxStreetMap, domContainer:null });
+		trackViewer.load(file,{ style: trackViewer.style3DMapboxStreetMap, domContainer: $('<div></div>')[0] });
 
 		stub.yieldTo('success',fileContent);
 
@@ -260,7 +261,12 @@ describe('Load()',function()
 		addSource.restore();
 
 		// verify that coords match
-		expect(addSource.args[1][1].data.geometry.coordinates.length).to.equal(count)
+		var coordinatesCount=0;
+		for (var index=1;index<addSource.args.length;index++)
+		{
+			coordinatesCount+=addSource.args[index][1].data.geometry.coordinates.length;
+		}
+		expect(coordinatesCount).to.equal(count)
 		//console.log(addSource.args[1][1].data.geometry.coordinates);
 		for (index=0;index<coordinates.length;index++)
 		{
@@ -300,6 +306,12 @@ describe('Load()',function()
 								count: 307,
 								coordinates: [[13.69201667,50.77527167],[13.69196866,50.77523138]],
 								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.004800999999865496, y: -0.004029000000116412, z: 0.03833333333333343 }, { x: -0.0006389999999356633, y: -0.011080000000163182, z: 0.03875000000000019 }]
+							},
+
+							{	file: __dirname+'/test2.gpx',			// GPX
+								count: 14721,
+								coordinates: [[9.76586,46.436386],[9.76589,46.436401]],
+								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: 0.0030000000000640625, y: 0.0014999999997655777, z: 0.04104166666666667 }, { x: 0.0037000000000730893, y: 0.0011999999998124622, z: 0.04158333333333379 }]
 							},
 
 							{	file: __dirname+'/test1.kmz',			// zipped KML v1
