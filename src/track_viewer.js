@@ -66,7 +66,7 @@ var trackViewer=(function()
 	}
 
 	// init basics
-	trackViewer.init=function (settings)
+	trackViewer.init=function(settings)
 	{
 		// copy settings
 		for (var setting in settings)
@@ -84,7 +84,7 @@ var trackViewer=(function()
 	}
 
 	// load track file and adjust settings
-	trackViewer.load=function (file,settings)
+	trackViewer.load=function(file,settings)
 	{
 		// copy settings
 		for (var setting in settings)
