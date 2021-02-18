@@ -1,5 +1,19 @@
 # Changelog
 
+### [1.0.3](https://www.github.com/the-sz/TrackViewer/compare/v1.0.2...v1.0.3) (2021-02-18)
+
+
+### Bug Fixes
+
+* fixed container dom name replaced by _settings.domContainer ([3e7c0d4](https://www.github.com/the-sz/TrackViewer/commit/3e7c0d47b85fcd81c3ca5eb653e4fb53646ac55b))
+* multi-track gpx file support ([c8568ba](https://www.github.com/the-sz/TrackViewer/commit/c8568baf9f8cb53616704b66ee3b1c0cb6dc12c1))
+* positioning ([52a28fa](https://www.github.com/the-sz/TrackViewer/commit/52a28fa4d2a9bed665a06dcc43dad7231e81ce2e))
+* remove xss warning ([3fd0ffd](https://www.github.com/the-sz/TrackViewer/commit/3fd0ffd357255ced89b0f043b505d811a4f91a89))
+* set "fullscreen" class on container in case of fullscreen too ([79ce14a](https://www.github.com/the-sz/TrackViewer/commit/79ce14a2be67a07a3b4cd335de725d163c618cb3))
+* tests improved ([4f35a85](https://www.github.com/the-sz/TrackViewer/commit/4f35a8581a5120ab97afeff2f4719e7d8a92d36b))
+* update mapbox to 2.1.1 ([106573e](https://www.github.com/the-sz/TrackViewer/commit/106573e945949b8fe3a1fa7e552238c034c3be4e))
+* zoom to track on load ([6d53741](https://www.github.com/the-sz/TrackViewer/commit/6d5374164e5349f4d63b378a35d102d3920ebe6c))
+
 ### [1.0.2](https://www.github.com/the-sz/TrackViewer/compare/v1.0.1...v1.0.2) (2021-02-11)
 
 
