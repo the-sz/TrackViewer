@@ -218,6 +218,7 @@ var trackViewer=(function()
 			$(_settings.domContainer).css('position','absolute');
 			$('body').css('overflow','hidden');
 			$(_settings.domFullScreenControl).addClass('fullscreen');
+			$(_settings.domContainer).addClass('fullscreen');
 		}
 		else
 		{
@@ -229,6 +230,7 @@ var trackViewer=(function()
 			$(_settings.domContainer).css('position','');
 			$('body').css('overflow','');
 			$(_settings.domFullScreenControl).removeClass('fullscreen');
+			$(_settings.domContainer).removeClass('fullscreen');
 		}
 
 		_onWindowResize();
