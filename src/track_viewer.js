@@ -63,7 +63,7 @@ var trackViewer=(function()
 		lineColor2D: '#0776FF',
 		lineColor3DMapBoxElevationFromMap: 'rgba(4, 117, 255, 1.0)',
 		lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255],
-	}
+	};
 
 	// init basics
 	trackViewer.init=function(settings)
@@ -71,7 +71,8 @@ var trackViewer=(function()
 		// copy settings
 		for (var setting in settings)
 		{
-			_settings[setting]=settings[setting];
+			if (_settings.hasOwnProperty(setting))
+				_settings[setting]=settings[setting];
 		}
 
 		window.addEventListener('resize',_onWindowResize,false);
@@ -103,7 +104,7 @@ var trackViewer=(function()
 				processData: false,
 				success: function(data)
 				{
-					if (file.split('.').pop()=='kmz')
+					if (file.split('.').pop()==='kmz')
 					{
 						// remote compressed file, extract it first
 						if ((typeof module==='object') && (typeof module.exports==='object'))
@@ -133,7 +134,7 @@ var trackViewer=(function()
 				}
 			});
 		}
-		else if (file.name.split('.').pop()=='kmz')
+		else if (file.name.split('.').pop()==='kmz')
 		{
 			// local compressed file, extract it first
 			JSZip.loadAsync(file).then(function (zip)
@@ -174,7 +175,7 @@ var trackViewer=(function()
 	// on window resize, resize our container too
 	function _onWindowResize()
 	{
-		if (_isFullScreen==true)
+		if (_isFullScreen===true)
 		{
 			// full screen
 			$(_settings.domContainer).height($(window).height());
@@ -546,7 +547,7 @@ var trackViewer=(function()
 		else
 			geometry=new THREE.CylinderGeometry(radius,radius,1,10,1);
 
-		var material=new THREE.MeshLambertMaterial( { color:0xff0000, flatShading:true } );
+		var material=new THREE.MeshLambertMaterial( { color:0xFF0000, flatShading:true } );
 
 		// add all coordinates to our space
 		var positions=_parseTrack(data);

@@ -27,7 +27,7 @@ global.FileReader=class FileReader
 {
 	onload(event) { }
 	readAsText(fileBlob) { this.onload(fileBlob); }
-}
+};
 
 // create mapbox
 global.mapboxgl={ };
@@ -104,7 +104,7 @@ global.THREE={ };
 THREE.ImageUtils={ crossOrigin: '' };
 THREE.Scene=class Scene
 {
-	add(object) { };
+	add(object) { }
 }
 THREE.FogExp2=class FogExp2
 {
@@ -153,10 +153,10 @@ THREE.AmbientLight=class AmbientLight
 }
 THREE.WebGLRenderer=class WebGLRenderer
 {
-	setClearColor() { };
-	setPixelRatio() { };
-	setSize() { };
-	render() { };
+	setClearColor() { }
+	setPixelRatio() { }
+	setSize() { }
+	render() { }
 	domElement=$('<div></div>')[0];
 }
 
