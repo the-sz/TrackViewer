@@ -17,7 +17,7 @@ global.$=global.jQuery;
 global.window=window;
 
 // create document
-global.document={ getElementById: function(id) { return null; }};
+global.document={ getElementById(id) { return null; }};
 
 // navigator
 global.navigator={ language: 'en' };
@@ -27,7 +27,7 @@ global.FileReader=class FileReader
 {
 	onload(event) { }
 	readAsText(fileBlob) { this.onload(fileBlob); }
-}
+};
 
 // create mapbox
 global.mapboxgl={ };
@@ -97,21 +97,21 @@ google.maps.Marker=class Marker
 
 // create luxon
 global.luxon={ };
-global.luxon.DateTime={ fromISO: function() { return this; }, setLocale: function() { return this; } };
+global.luxon.DateTime={ fromISO() { return this; }, setLocale() { return this; } };
 
 // create THREE
 global.THREE={ };
 THREE.ImageUtils={ crossOrigin: '' };
 THREE.Scene=class Scene
 {
-	add(object) { };
+	add(object) { }
 }
 THREE.FogExp2=class FogExp2
 {
 }
 THREE.PerspectiveCamera=class PerspectiveCamera
 {
-	position={ set: function() { } }
+	position={ set() { } }
 	updateProjectionMatrix() { }
 }
 THREE.Vector3=class Vector3
@@ -146,17 +146,17 @@ THREE.OrbitControls=class OrbitControls
 }
 THREE.DirectionalLight=class DirectionalLight
 {
-	position={ set: function() { } }
+	position={ set() { } }
 }
 THREE.AmbientLight=class AmbientLight
 {
 }
 THREE.WebGLRenderer=class WebGLRenderer
 {
-	setClearColor() { };
-	setPixelRatio() { };
-	setSize() { };
-	render() { };
+	setClearColor() { }
+	setPixelRatio() { }
+	setSize() { }
+	render() { }
 	domElement=$('<div></div>')[0];
 }
 
@@ -185,21 +185,21 @@ describe('Init()',function()
 		var jQueryOffset={ left: 6 };
 
 		// $(null)
-		var spyNull=sinon.spy(	{	height: function(height) { return 2; },
-											width: function(width) { return 3; },
-											offset: function (offset) { return jQueryOffset; },
-											click: function () { }
+		var spyNull=sinon.spy(	{	height(height) { return 2; },
+											width(width) { return 3; },
+											offset(offset) { return jQueryOffset; },
+											click() { }
 										});
 		$.withArgs(null).returns(spyNull);
 
 		// $(window)
-		var spyWindow=sinon.spy(	{	height: function(height) { return 4; },
-												width: function(width) { return 5; }
+		var spyWindow=sinon.spy(	{	height(height) { return 4; },
+												width(width) { return 5; }
 											});
 		$.withArgs(window).returns(spyWindow);
 
 		// $(domHeader)
-		var domHeader=sinon.spy(	{	height: function(height) { return 2; } });
+		var domHeader=sinon.spy(	{	height(height) { return 2; } });
 		$.withArgs(domHeader).returns(domHeader);
 
 		// init track viewer
@@ -291,7 +291,7 @@ describe('Load()',function()
 		add.restore();
 
 		// verify that coords match
-		if (count==0)
+		if (count===0)
 			expect(add.callCount).to.equal((count+3))			// there are 3 _scene.add(light) lights added at the end
 		else
 			expect(add.callCount).to.equal((count+3+1))		// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
@@ -453,7 +453,7 @@ describe('Load()',function()
 			test2D(this,track.file,track.count,track.coordinates,done);
 		});
 
-		if (track.isZip==false)
+		if (track.isZip===false)
 		{
 			it('should load 2D Blob - '+track.file,function(done)
 			{

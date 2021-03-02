@@ -63,7 +63,7 @@ var trackViewer=(function()
 		lineColor2D: '#0776FF',
 		lineColor3DMapBoxElevationFromMap: 'rgba(4, 117, 255, 1.0)',
 		lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255],
-	}
+	};
 
 	// init basics
 	trackViewer.init=function(settings)
@@ -71,7 +71,8 @@ var trackViewer=(function()
 		// copy settings
 		for (var setting in settings)
 		{
-			_settings[setting]=settings[setting];
+			if (_settings.hasOwnProperty(setting))
+				_settings[setting]=settings[setting];
 		}
 
 		window.addEventListener('resize',_onWindowResize,false);
@@ -103,7 +104,7 @@ var trackViewer=(function()
 				processData: false,
 				success: function(data)
 				{
-					if (file.split('.').pop()=='kmz')
+					if (file.split('.').pop()==='kmz')
 					{
 						// remote compressed file, extract it first
 						if ((typeof module==='object') && (typeof module.exports==='object'))
@@ -133,7 +134,7 @@ var trackViewer=(function()
 				}
 			});
 		}
-		else if (file.name.split('.').pop()=='kmz')
+		else if (file.name.split('.').pop()==='kmz')
 		{
 			// local compressed file, extract it first
 			JSZip.loadAsync(file).then(function (zip)
@@ -174,7 +175,7 @@ var trackViewer=(function()
 	// on window resize, resize our container too
 	function _onWindowResize()
 	{
-		if (_isFullScreen==true)
+		if (_isFullScreen===true)
 		{
 			// full screen
 			$(_settings.domContainer).height($(window).height());
@@ -312,7 +313,7 @@ var trackViewer=(function()
 					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
 						var parts=this.split(',');
-						if (parts.length==3)
+						if (parts.length===3)
 						{
 							parts.push(name);
 							nodes.push(parts);
@@ -371,7 +372,7 @@ var trackViewer=(function()
 				var position={};
 				var valid=false;
 
-				if (isTCX==true)
+				if (isTCX===true)
 				{
 					// TCX
 					position.x=parseFloat($(this).children('Position').children('LongitudeDegrees').text());
@@ -384,7 +385,7 @@ var trackViewer=(function()
 
 					valid=true;
 				}
-				else if (isGPX==true)
+				else if (isGPX===true)
 				{
 					// GPX
 					position.x=parseFloat($(this)[0].attributes.lon.value);
@@ -406,11 +407,11 @@ var trackViewer=(function()
 		
 					valid=true;
 				}
-				else if (isKML2==true)
+				else if (isKML2===true)
 				{
 					// KML v2
 					var values=$(this).children('Point').children('coordinates').text().split(',');
-					if (values.length==3)
+					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
 						position.y=parseFloat(values[1]);
@@ -424,7 +425,7 @@ var trackViewer=(function()
 						valid=true;
 					}
 				}
-				else if (isMyMaps==true)
+				else if (isMyMaps===true)
 				{
 					// KML Google My Maps
 					position.x=parseFloat(this[0]);
@@ -455,7 +456,7 @@ var trackViewer=(function()
 						valid=true;
 					}
 				}
-				if (valid==true)
+				if (valid===true)
 				{
 					positions.push(position);
 				}
@@ -513,7 +514,7 @@ var trackViewer=(function()
 			});
 
 			// create line
-			if (_settings.useLines==true)
+			if (_settings.useLines===true)
 				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
@@ -541,12 +542,12 @@ var trackViewer=(function()
 		_camera.up=new THREE.Vector3(0,0,1);
 
 		// create the display objects
-		if (_settings.useDots==true)
+		if (_settings.useDots===true)
 			geometry=new THREE.DodecahedronGeometry(radius,2);
 		else
 			geometry=new THREE.CylinderGeometry(radius,radius,1,10,1);
 
-		var material=new THREE.MeshLambertMaterial( { color:0xff0000, flatShading:true } );
+		var material=new THREE.MeshLambertMaterial( { color:0xFF0000, flatShading:true } );
 
 		// add all coordinates to our space
 		var positions=_parseTrack(data);
@@ -554,7 +555,7 @@ var trackViewer=(function()
 		{
 			$(this).each(function()
 			{
-				if (initial==true)
+				if (initial===true)
 				{
 					// save start position as base
 					_base=this;
@@ -589,7 +590,7 @@ var trackViewer=(function()
 		
 				var mesh=new THREE.Mesh(geometry,material);
 		
-				if (_settings.useDots==true)
+				if (_settings.useDots===true)
 				{
 					// create dot
 					mesh.position.x=(this.x-_base.x)*100;
