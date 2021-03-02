@@ -291,7 +291,7 @@ describe('Load()',function()
 		add.restore();
 
 		// verify that coords match
-		if (count==0)
+		if (count===0)
 			expect(add.callCount).to.equal((count+3))			// there are 3 _scene.add(light) lights added at the end
 		else
 			expect(add.callCount).to.equal((count+3+1))		// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
@@ -453,7 +453,7 @@ describe('Load()',function()
 			test2D(this,track.file,track.count,track.coordinates,done);
 		});
 
-		if (track.isZip==false)
+		if (track.isZip===false)
 		{
 			it('should load 2D Blob - '+track.file,function(done)
 			{

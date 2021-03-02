@@ -313,7 +313,7 @@ var trackViewer=(function()
 					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
 						var parts=this.split(',');
-						if (parts.length==3)
+						if (parts.length===3)
 						{
 							parts.push(name);
 							nodes.push(parts);
@@ -372,7 +372,7 @@ var trackViewer=(function()
 				var position={};
 				var valid=false;
 
-				if (isTCX==true)
+				if (isTCX===true)
 				{
 					// TCX
 					position.x=parseFloat($(this).children('Position').children('LongitudeDegrees').text());
@@ -385,7 +385,7 @@ var trackViewer=(function()
 
 					valid=true;
 				}
-				else if (isGPX==true)
+				else if (isGPX===true)
 				{
 					// GPX
 					position.x=parseFloat($(this)[0].attributes.lon.value);
@@ -407,11 +407,11 @@ var trackViewer=(function()
 		
 					valid=true;
 				}
-				else if (isKML2==true)
+				else if (isKML2===true)
 				{
 					// KML v2
 					var values=$(this).children('Point').children('coordinates').text().split(',');
-					if (values.length==3)
+					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
 						position.y=parseFloat(values[1]);
@@ -425,7 +425,7 @@ var trackViewer=(function()
 						valid=true;
 					}
 				}
-				else if (isMyMaps==true)
+				else if (isMyMaps===true)
 				{
 					// KML Google My Maps
 					position.x=parseFloat(this[0]);
@@ -456,7 +456,7 @@ var trackViewer=(function()
 						valid=true;
 					}
 				}
-				if (valid==true)
+				if (valid===true)
 				{
 					positions.push(position);
 				}
@@ -514,7 +514,7 @@ var trackViewer=(function()
 			});
 
 			// create line
-			if (_settings.useLines==true)
+			if (_settings.useLines===true)
 				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
@@ -542,7 +542,7 @@ var trackViewer=(function()
 		_camera.up=new THREE.Vector3(0,0,1);
 
 		// create the display objects
-		if (_settings.useDots==true)
+		if (_settings.useDots===true)
 			geometry=new THREE.DodecahedronGeometry(radius,2);
 		else
 			geometry=new THREE.CylinderGeometry(radius,radius,1,10,1);
@@ -555,7 +555,7 @@ var trackViewer=(function()
 		{
 			$(this).each(function()
 			{
-				if (initial==true)
+				if (initial===true)
 				{
 					// save start position as base
 					_base=this;
@@ -590,7 +590,7 @@ var trackViewer=(function()
 		
 				var mesh=new THREE.Mesh(geometry,material);
 		
-				if (_settings.useDots==true)
+				if (_settings.useDots===true)
 				{
 					// create dot
 					mesh.position.x=(this.x-_base.x)*100;
