@@ -246,12 +246,12 @@ var trackViewer=(function()
 
 		$(_settings.domContainer).css('display','block', 'important');
 
-		if ((_settings.style==trackViewer.style2DAllRecords) || (_settings.style==trackViewer.style2DOneRecordPerMinute))
+		if ((_settings.style===trackViewer.style2DAllRecords) || (_settings.style===trackViewer.style2DOneRecordPerMinute))
 		{
 			// 2D
 			_load2D(data);
 		}
-		else if ((_settings.style==trackViewer.style3DMapboxStreetMap) || (_settings.style==trackViewer.style3DMapboxSatellite))
+		else if ((_settings.style===trackViewer.style3DMapboxStreetMap) || (_settings.style===trackViewer.style3DMapboxSatellite))
 		{
 			// 3D mapbox
 			_load3DMapbox(data);
@@ -476,11 +476,11 @@ var trackViewer=(function()
 	function _create2DMarker(map,date,position,title)
 	{
 		// allow marker only every minute
-		if ((_settings.style==trackViewer.style2DAllRecords) || ((date-_lastDate)>(60*1000)))
+		if ((_settings.style===trackViewer.style2DAllRecords) || ((date-_lastDate)>(60*1000)))
 		{
 			_lastDate=date;
 
-			if (_settings.style==trackViewer.style2DAllRecords)
+			if (_settings.style===trackViewer.style2DAllRecords)
 				var icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
 			else
 				var icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
@@ -567,11 +567,11 @@ var trackViewer=(function()
 					var planeMaterial=null;
 					var planeGeometry=new THREE.PlaneBufferGeometry(earthSize,earthSize);
 					THREE.ImageUtils.crossOrigin='';
-					if (_settings.style==trackViewer.style3DStreetMap)
+					if (_settings.style===trackViewer.style3DStreetMap)
 						maptype='roadmap';
-					else if (_settings.style==trackViewer.style3DSatellite)
+					else if (_settings.style===trackViewer.style3DSatellite)
 						maptype='satellite';
-					else if (_settings.style==trackViewer.style3DBlueBackground)
+					else if (_settings.style===trackViewer.style3DBlueBackground)
 					{
 						planeMaterial=new THREE.MeshPhongMaterial( { color: 0x0040F0, side: THREE.DoubleSide } );
 					}
@@ -712,7 +712,7 @@ var trackViewer=(function()
 				bearing: 0,
 				bounds: bounds,
 				fitBoundsOptions: { padding: 0 },
-				style: (_settings.style==trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
+				style: (_settings.style===trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
 			});
 
 			map.on('load', function ()
@@ -813,7 +813,7 @@ var trackViewer=(function()
 				container: _settings.domContainer,
 				mapboxApiAccessToken: _settings.mapBoxAccessToken,
 				// https://docs.mapbox.com/mapbox-gl-js/api/
-				mapStyle: (_settings.style==trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
+				mapStyle: (_settings.style===trackViewer.style3DMapboxStreetMap)?'mapbox://styles/mapbox/streets-v11':'mapbox://styles/mapbox/satellite-streets-v11',
 				initialViewState:
 				{
 					latitude: parseFloat(_base.y),
