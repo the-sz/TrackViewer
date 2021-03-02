@@ -22,7 +22,9 @@
     "nyc": "^15.1.0",
     "sinon": "^9.2.4"
   },
-  "rules": {
-    "quotes": [2, "single", { "avoidEscape": true }]
+  "eslintConfig": {
+    "rules": {
+      "quotes": ["error", "single", { "avoidEscape": true }]
+	 }
   }
 }
