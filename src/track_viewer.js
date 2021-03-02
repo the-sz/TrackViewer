@@ -106,7 +106,7 @@ var trackViewer=(function()
 					if (file.split('.').pop()=='kmz')
 					{
 						// remote compressed file, extract it first
-						if ((typeof module==="object") && (typeof module.exports==="object"))
+						if ((typeof module==='object') && (typeof module.exports==='object'))
 						{
 							// running in node.js
 							var zip=new JSZip(data,{ base64: false, checkCRC32: true });
@@ -118,7 +118,7 @@ var trackViewer=(function()
 							// running in browser
 							JSZip.loadAsync(data).then(function(zip)
 							{
-								zip.file('doc.kml').async("string").then(function(content)
+								zip.file('doc.kml').async('string').then(function(content)
 								{
 									_load($.parseXML(content));
 								});
@@ -128,7 +128,7 @@ var trackViewer=(function()
 					else
 					{
 						// remote file
-						_load($.parseXML(new TextDecoder("utf-8").decode(data)));
+						_load($.parseXML(new TextDecoder('utf-8').decode(data)));
 					}
 				}
 			});
@@ -138,7 +138,7 @@ var trackViewer=(function()
 			// local compressed file, extract it first
 			JSZip.loadAsync(file).then(function (zip)
 			{
-				zip.file('doc.kml').async("string").then(function(content)
+				zip.file('doc.kml').async('string').then(function(content)
 				{
 					_load($.parseXML(content));
 				});
@@ -284,7 +284,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// KML v1
-				//console.log("KML v1");
+				//console.log('KML v1');
 				coordinates.push(nodes);
 				tracks.push($(data).find('when'));
 				break;
@@ -294,7 +294,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// KML v1
-				//console.log("KML v1");
+				//console.log('KML v1');
 				coordinates.push(nodes);
 				tracks.push($(data).find('when'));
 				break;
@@ -311,7 +311,7 @@ var trackViewer=(function()
 
 					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
-						var parts=this.split(",");
+						var parts=this.split(',');
 						if (parts.length==3)
 						{
 							parts.push(name);
@@ -319,7 +319,7 @@ var trackViewer=(function()
 						}
 					});
 				});
-				//console.log("KML Google My Maps");
+				//console.log('KML Google My Maps');
 				tracks.push(nodes);
 				isMyMaps=true;
 				break;
@@ -329,7 +329,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// KML v2
-				//console.log("KML v2");
+				//console.log('KML v2');
 				tracks.push(nodes);
 				isKML2=true;
 				break;
@@ -339,7 +339,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// GPX
-				//console.log("GPX");
+				//console.log('GPX');
 				$(nodes).each(function()
 				{
 					tracks.push($(this).find('trkseg').children());
@@ -352,7 +352,7 @@ var trackViewer=(function()
 			if (nodes.length>0)
 			{
 				// TCX
-				//console.log("TCX");
+				//console.log('TCX');
 				tracks.push(nodes);
 				isTCX=true;
 				break;
@@ -831,7 +831,7 @@ var trackViewer=(function()
 
 }.call(this));
 
-if ((typeof module==="object") && (typeof module.exports==="object"))
+if ((typeof module==='object') && (typeof module.exports==='object'))
 {
 	module.exports=trackViewer;
 }
