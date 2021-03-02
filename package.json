@@ -21,7 +21,7 @@
     "node-zip": "^1.1.1",
     "nyc": "^15.1.0",
     "sinon": "^9.2.4"
-  }
+  },
   "rules": {
     "quotes": [2, "single", { "avoidEscape": true }]
   }
