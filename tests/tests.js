@@ -5,7 +5,7 @@ const chai=require('chai');
 const expect=chai.expect;
 
 // create zip
-const JSZip=require("node-zip");
+const JSZip=require('node-zip');
 global.JSZip=JSZip;
 
 // create jquery
@@ -47,20 +47,20 @@ mapboxgl.Map=class Map
 	addControl(object) { }
 
 	addLayer(object) { }
-}
+};
 
 mapboxgl.FullscreenControl=class FullscreenControl
 {
-}
+};
 
 mapboxgl.LngLatBounds=class LngLatBounds
 {
 	extend(array) { }
-}
+};
 
 DeckGL=class DeckGL
 {
-}
+};
 
 var PathLayerData=[];
 PathLayer=class PathLayer
@@ -69,7 +69,7 @@ PathLayer=class PathLayer
 	{
 		PathLayerData.push(parameter.data[0].path);
 	}
-}
+};
 
 global.deck={ DeckGL, PathLayer };
 
@@ -79,13 +79,13 @@ global.google.maps={ };
 google.maps.Map=class Map
 {
 	setCenter(parameter) { }
-}
+};
 google.maps.Point=class Point
 {
-}
+};
 google.maps.Polyline=class Polyline
 {
-}
+};
 global.google.maps.marker=[];
 google.maps.Marker=class Marker
 {
@@ -93,7 +93,7 @@ google.maps.Marker=class Marker
 	{
 		global.google.maps.marker.push(parameter);
 	}
-}
+};
 
 // create luxon
 global.luxon={ };
@@ -105,52 +105,52 @@ THREE.ImageUtils={ crossOrigin: '' };
 THREE.Scene=class Scene
 {
 	add(object) { }
-}
+};
 THREE.FogExp2=class FogExp2
 {
-}
+};
 THREE.PerspectiveCamera=class PerspectiveCamera
 {
 	position={ set() { } }
 	updateProjectionMatrix() { }
-}
+};
 THREE.Vector3=class Vector3
 {
 	normalize() { return this; }
-}
+};
 THREE.Mesh=class Mesh
 {
 	rotateOnAxis(vector) { }
 	updateMatrix() { }
 	scale={ y: 0 }
 	position={ x: 0, y: 0, z: 0 }
-}
+};
 THREE.DodecahedronGeometry=class DodecahedronGeometry
 {
-}
+};
 THREE.CylinderGeometry=class CylinderGeometry
 {
-}
+};
 THREE.PlaneBufferGeometry=class PlaneBufferGeometry
 {
-}
+};
 THREE.MeshPhongMaterial=class MeshPhongMaterial
 {
-}
+};
 THREE.MeshLambertMaterial=class MeshLambertMaterial
 {
-}
+};
 THREE.OrbitControls=class OrbitControls
 {
 	addEventListener() { }
-}
+};
 THREE.DirectionalLight=class DirectionalLight
 {
 	position={ set() { } }
-}
+};
 THREE.AmbientLight=class AmbientLight
 {
-}
+};
 THREE.WebGLRenderer=class WebGLRenderer
 {
 	setClearColor() { }
@@ -158,7 +158,7 @@ THREE.WebGLRenderer=class WebGLRenderer
 	setSize() { }
 	render() { }
 	domElement=$('<div></div>')[0];
-}
+};
 
 // load script
 var trackViewer=require('../src/track_viewer.js');
@@ -237,7 +237,7 @@ describe('Load()',function()
 		stub.restore();
 
 		// verify that coords match
-		expect(global.google.maps.marker.length).to.equal(count)
+		expect(global.google.maps.marker.length).to.equal(count);
 		//console.log(global.google.maps.marker);
 		for (index=0;index<coordinates.length;index++)
 		{
@@ -263,7 +263,7 @@ describe('Load()',function()
 		trackViewer.load(fileBlob,{ style: trackViewer.style2DAllRecords, useLines: true, domContainer: $('<div></div>')[0], domHeader: null });
 
 		// verify that coords match
-		expect(global.google.maps.marker.length).to.equal(count)
+		expect(global.google.maps.marker.length).to.equal(count);
 		//console.log(global.google.maps.marker);
 		for (index=0;index<coordinates.length;index++)
 		{
@@ -292,9 +292,9 @@ describe('Load()',function()
 
 		// verify that coords match
 		if (count===0)
-			expect(add.callCount).to.equal((count+3))			// there are 3 _scene.add(light) lights added at the end
+			expect(add.callCount).to.equal((count+3));			// there are 3 _scene.add(light) lights added at the end
 		else
-			expect(add.callCount).to.equal((count+3+1))		// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
+			expect(add.callCount).to.equal((count+3+1));			// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
 		//console.log(add.args);
 		for (index=0;index<positions.length;index++)
 		{
@@ -323,13 +323,13 @@ describe('Load()',function()
 
 		// verify that coords match
 		var coordinatesCount=0;
-		for (var index=1;index<addSource.args.length;index++)
+		for (let index=1;index<addSource.args.length;index++)
 		{
 			coordinatesCount+=addSource.args[index][1].data.geometry.coordinates.length;
 		}
-		expect(coordinatesCount).to.equal(count)
+		expect(coordinatesCount).to.equal(count);
 		//console.log(addSource.args[1][1].data.geometry.coordinates);
-		for (index=0;index<coordinates.length;index++)
+		for (let index=0;index<coordinates.length;index++)
 		{
 			expect(addSource.args[1][1].data.geometry.coordinates[index]).deep.to.equal(coordinates[index]);
 		}
@@ -355,13 +355,13 @@ describe('Load()',function()
 
 		// verify that coords match
 		var coordinatesCount=0;
-		for (var index=0;index<PathLayerData.length;index++)
+		for (let index=0;index<PathLayerData.length;index++)
 		{
 			coordinatesCount+=PathLayerData[index].length;
 		}
-		expect(coordinatesCount).to.equal(count)
+		expect(coordinatesCount).to.equal(count);
 		//console.log(PathLayerData);
-		for (index=0;index<coordinates.length;index++)
+		for (let index=0;index<coordinates.length;index++)
 		{
 			expect(PathLayerData[0][index]).deep.to.equal(coordinates[index]);
 		}

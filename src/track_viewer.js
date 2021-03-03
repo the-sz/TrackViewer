@@ -69,7 +69,7 @@ var trackViewer=(function()
 	trackViewer.init=function(settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
 			if (_settings.hasOwnProperty(setting))
 				_settings[setting]=settings[setting];
@@ -82,15 +82,16 @@ var trackViewer=(function()
 		{
 			_setFullScreen(!_isFullScreen);
 		});
-	}
+	};
 
 	// load track file and adjust settings
 	trackViewer.load=function(file,settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
-			_settings[setting]=settings[setting];
+			if (_settings.hasOwnProperty(setting))
+				_settings[setting]=settings[setting];
 		}
 
 		if (typeof file=='string')
@@ -102,7 +103,7 @@ var trackViewer=(function()
 				type: 'GET',
 				xhrFields: { responseType: 'arraybuffer' },
 				processData: false,
-				success: function(data)
+				success(data)
 				{
 					if (file.split('.').pop()==='kmz')
 					{
@@ -156,7 +157,7 @@ var trackViewer=(function()
 
 			reader.readAsText(file);
 		}
-	}
+	};
 
 	// unload all stuff
 	function _unload()
@@ -209,7 +210,7 @@ var trackViewer=(function()
 	{
 		_isFullScreen=fullScreen;
 		
-		if (_isFullScreen==true)
+		if (_isFullScreen===true)
 		{
 			// set container to full screen
 			$(_settings.domContainer).css('left',0);
@@ -308,11 +309,11 @@ var trackViewer=(function()
 				nodes=[];
 				$(nodesCoordinates).each(function()
 				{
-					var name=escape($(this).parent().parent().children('name').text());
+					let name=escape($(this).parent().parent().children('name').text());
 
 					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
-						var parts=this.split(',');
+						let parts=this.split(',');
 						if (parts.length===3)
 						{
 							parts.push(name);
@@ -380,7 +381,7 @@ var trackViewer=(function()
 					position.z=parseFloat($(this).children('AltitudeMeters').text());
 
 					position.date=new Date($(this).children('Time').text());
-					var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+					let dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
 
 					valid=true;
@@ -393,10 +394,10 @@ var trackViewer=(function()
 					position.z=parseFloat($(this).children('ele').text());
 
 					var date=$(this).children('time').text();
-					if (date!='')
+					if (date!=='')
 					{
 						position.date=new Date(date);
-						var dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 					}
 					else
@@ -410,7 +411,7 @@ var trackViewer=(function()
 				else if (isKML2===true)
 				{
 					// KML v2
-					var values=$(this).children('Point').children('coordinates').text().split(',');
+					let values=$(this).children('Point').children('coordinates').text().split(',');
 					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
@@ -419,7 +420,7 @@ var trackViewer=(function()
 
 						var dateRaw=$(this).children('TimeStamp').children('when').text();
 						position.date=new Date(dateRaw);
-						var dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 
 						valid=true;
@@ -442,15 +443,15 @@ var trackViewer=(function()
 					// KML v1
 					// this is 'when'
 					// coordinates are then coords
-					var values=$($(coordinates[track])[index]).text().split(' ');
-					if (values.length==3)
+					let values=$($(coordinates[track])[index]).text().split(' ');
+					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
 						position.y=parseFloat(values[1]);
 						position.z=parseFloat(values[2]);
 
 						position.date=new Date($(this).text());
-						var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 
 						valid=true;
@@ -478,12 +479,14 @@ var trackViewer=(function()
 		// allow marker only every minute
 		if ((_settings.style===trackViewer.style2DAllRecords) || ((date-_lastDate)>(60*1000)))
 		{
+			var icon;
+
 			_lastDate=date;
 
 			if (_settings.style===trackViewer.style2DAllRecords)
-				var icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
+				icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
 			else
-				var icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
+				icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
 			new google.maps.Marker({position:position, map:map, title:title, icon:icon });
 
 			_dots.push(position);
@@ -509,7 +512,7 @@ var trackViewer=(function()
 
 				_create2DMarker(map,this.date,position,this.title);
 
-				if (center===undefined)
+				if (typeof center==='undefined')
 					center=position;
 			});
 
@@ -518,7 +521,7 @@ var trackViewer=(function()
 				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
-		if (center!==undefined)
+		if (typeof center!=='undefined')
 			map.setCenter(center);
 	}
 
@@ -608,7 +611,7 @@ var trackViewer=(function()
 						height=-height;
 						z=-height;
 					}
-					else if (height==0)
+					else if (height===0)
 						height=0.0001;
 		
 					// rotate up
@@ -671,14 +674,14 @@ var trackViewer=(function()
 		index=0;
 		$(positions).each(function()
 		{
-			if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+			if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 				dataPoints.push([]);
 			else
 				dataPoints.push([ { 'path': [] } ]);
 
 			$(this).each(function()
 			{
-				if (initial==true)
+				if (initial===true)
 				{
 					// save start position as base
 					_base=this;
@@ -687,7 +690,7 @@ var trackViewer=(function()
 					bounds=new mapboxgl.LngLatBounds([parseFloat(this.x), parseFloat(this.y)],[parseFloat(this.x), parseFloat(this.y)]);
 				}
 
-				if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+				if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 					dataPoints[index].push([parseFloat(this.x), parseFloat(this.y)]);
 				else
 					dataPoints[index][0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
@@ -698,7 +701,7 @@ var trackViewer=(function()
 			index++;
 		});
 
-		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+		if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 		{
 			// mapbox
 			mapboxgl.accessToken=_settings.mapBoxAccessToken;
@@ -725,7 +728,7 @@ var trackViewer=(function()
 					'maxzoom': 14
 				});
 
-				if (_settings.elevation==trackViewer.elevationFromMap)
+				if (_settings.elevation===trackViewer.elevationFromMap)
 					map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
 
 				map.addControl(new mapboxgl.FullscreenControl());
