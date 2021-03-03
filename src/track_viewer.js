@@ -102,7 +102,7 @@ var trackViewer=(function()
 				type: 'GET',
 				xhrFields: { responseType: 'arraybuffer' },
 				processData: false,
-				success: function(data)
+				success(data)
 				{
 					if (file.split('.').pop()==='kmz')
 					{

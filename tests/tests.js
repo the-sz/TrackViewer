@@ -329,7 +329,7 @@ describe('Load()',function()
 		}
 		expect(coordinatesCount).to.equal(count);
 		//console.log(addSource.args[1][1].data.geometry.coordinates);
-		for (index=0;index<coordinates.length;index++)
+		for (var index=0;index<coordinates.length;index++)
 		{
 			expect(addSource.args[1][1].data.geometry.coordinates[index]).deep.to.equal(coordinates[index]);
 		}
@@ -361,7 +361,7 @@ describe('Load()',function()
 		}
 		expect(coordinatesCount).to.equal(count)
 		//console.log(PathLayerData);
-		for (index=0;index<coordinates.length;index++)
+		for (var index=0;index<coordinates.length;index++)
 		{
 			expect(PathLayerData[0][index]).deep.to.equal(coordinates[index]);
 		}
