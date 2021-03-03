@@ -69,7 +69,7 @@ var trackViewer=(function()
 	trackViewer.init=function(settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
 			if (_settings.hasOwnProperty(setting))
 				_settings[setting]=settings[setting];
@@ -88,9 +88,10 @@ var trackViewer=(function()
 	trackViewer.load=function(file,settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
-			_settings[setting]=settings[setting];
+			if (_settings.hasOwnProperty(setting))
+				_settings[setting]=settings[setting];
 		}
 
 		if (typeof file=='string')
@@ -102,7 +103,7 @@ var trackViewer=(function()
 				type: 'GET',
 				xhrFields: { responseType: 'arraybuffer' },
 				processData: false,
-				success: function(data)
+				success(data)
 				{
 					if (file.split('.').pop()==='kmz')
 					{
