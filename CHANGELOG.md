@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.4](https://www.github.com/the-sz/TrackViewer/compare/v1.0.3...v1.0.4) (2021-03-03)
+
+
+### Bug Fixes
+
+* quotes fixed ([fe808d4](https://www.github.com/the-sz/TrackViewer/commit/fe808d478473dd268c0532911dc4a4c2094273c7))
+
 ### [1.0.3](https://www.github.com/the-sz/TrackViewer/compare/v1.0.2...v1.0.3) (2021-02-18)
 
 

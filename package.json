@@ -1,6 +1,6 @@
 {
   "name": "trackviewer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,13 @@
   },
   "eslintConfig": {
     "rules": {
-      "quotes": ["error", "single", { "avoidEscape": true }]
-	 }
+      "quotes": [
+        "error",
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ]
+    }
   }
 }
