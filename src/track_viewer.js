@@ -309,11 +309,11 @@ var trackViewer=(function()
 				nodes=[];
 				$(nodesCoordinates).each(function()
 				{
-					var name=escape($(this).parent().parent().children('name').text());
+					let name=escape($(this).parent().parent().children('name').text());
 
 					$($(this).text().split(' ')).each(function()					// lgtm [js/xss-through-dom]
 					{
-						var parts=this.split(',');
+						let parts=this.split(',');
 						if (parts.length===3)
 						{
 							parts.push(name);
