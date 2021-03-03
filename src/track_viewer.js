@@ -701,7 +701,7 @@ var trackViewer=(function()
 			index++;
 		});
 
-		if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+		if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 		{
 			// mapbox
 			mapboxgl.accessToken=_settings.mapBoxAccessToken;
