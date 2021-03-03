@@ -487,7 +487,7 @@ var trackViewer=(function()
 				icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
 			else
 				icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
-			let marker=new google.maps.Marker({position:position, map:map, title:title, icon:icon });
+			new google.maps.Marker({position:position, map:map, title:title, icon:icon });
 
 			_dots.push(position);
 		}
@@ -811,7 +811,7 @@ var trackViewer=(function()
 				index++;
 			});
 
-			let deckgl=new DeckGL(
+			new DeckGL(
 			{
 				container: _settings.domContainer,
 				mapboxApiAccessToken: _settings.mapBoxAccessToken,
