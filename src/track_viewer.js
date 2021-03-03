@@ -69,7 +69,7 @@ var trackViewer=(function()
 	trackViewer.init=function(settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
 			if (_settings.hasOwnProperty(setting))
 				_settings[setting]=settings[setting];
@@ -88,7 +88,7 @@ var trackViewer=(function()
 	trackViewer.load=function(file,settings)
 	{
 		// copy settings
-		for (var setting in settings)
+		for (let setting in settings)
 		{
 			_settings[setting]=settings[setting];
 		}
