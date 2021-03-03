@@ -90,7 +90,8 @@ var trackViewer=(function()
 		// copy settings
 		for (let setting in settings)
 		{
-			_settings[setting]=settings[setting];
+			if (_settings.hasOwnProperty(setting))
+				_settings[setting]=settings[setting];
 		}
 
 		if (typeof file=='string')
