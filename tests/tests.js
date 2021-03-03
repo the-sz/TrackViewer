@@ -47,20 +47,20 @@ mapboxgl.Map=class Map
 	addControl(object) { }
 
 	addLayer(object) { }
-}
+};
 
 mapboxgl.FullscreenControl=class FullscreenControl
 {
-}
+};
 
 mapboxgl.LngLatBounds=class LngLatBounds
 {
 	extend(array) { }
-}
+};
 
 DeckGL=class DeckGL
 {
-}
+};
 
 var PathLayerData=[];
 PathLayer=class PathLayer
@@ -69,7 +69,7 @@ PathLayer=class PathLayer
 	{
 		PathLayerData.push(parameter.data[0].path);
 	}
-}
+};
 
 global.deck={ DeckGL, PathLayer };
 
@@ -237,7 +237,7 @@ describe('Load()',function()
 		stub.restore();
 
 		// verify that coords match
-		expect(global.google.maps.marker.length).to.equal(count)
+		expect(global.google.maps.marker.length).to.equal(count);
 		//console.log(global.google.maps.marker);
 		for (index=0;index<coordinates.length;index++)
 		{
@@ -292,9 +292,9 @@ describe('Load()',function()
 
 		// verify that coords match
 		if (count===0)
-			expect(add.callCount).to.equal((count+3))			// there are 3 _scene.add(light) lights added at the end
+			expect(add.callCount).to.equal((count+3));			// there are 3 _scene.add(light) lights added at the end
 		else
-			expect(add.callCount).to.equal((count+3+1))		// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
+			expect(add.callCount).to.equal((count+3+1));			// there are 3 _scene.add(light) lights added at the end, and one _scene.add(_plane) at the beginning
 		//console.log(add.args);
 		for (index=0;index<positions.length;index++)
 		{
@@ -327,7 +327,7 @@ describe('Load()',function()
 		{
 			coordinatesCount+=addSource.args[index][1].data.geometry.coordinates.length;
 		}
-		expect(coordinatesCount).to.equal(count)
+		expect(coordinatesCount).to.equal(count);
 		//console.log(addSource.args[1][1].data.geometry.coordinates);
 		for (index=0;index<coordinates.length;index++)
 		{

@@ -82,7 +82,7 @@ var trackViewer=(function()
 		{
 			_setFullScreen(!_isFullScreen);
 		});
-	}
+	};
 
 	// load track file and adjust settings
 	trackViewer.load=function(file,settings)
@@ -209,7 +209,7 @@ var trackViewer=(function()
 	{
 		_isFullScreen=fullScreen;
 		
-		if (_isFullScreen==true)
+		if (_isFullScreen===true)
 		{
 			// set container to full screen
 			$(_settings.domContainer).css('left',0);
@@ -443,7 +443,7 @@ var trackViewer=(function()
 					// this is 'when'
 					// coordinates are then coords
 					var values=$($(coordinates[track])[index]).text().split(' ');
-					if (values.length==3)
+					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
 						position.y=parseFloat(values[1]);
@@ -608,7 +608,7 @@ var trackViewer=(function()
 						height=-height;
 						z=-height;
 					}
-					else if (height==0)
+					else if (height===0)
 						height=0.0001;
 		
 					// rotate up
@@ -678,7 +678,7 @@ var trackViewer=(function()
 
 			$(this).each(function()
 			{
-				if (initial==true)
+				if (initial===true)
 				{
 					// save start position as base
 					_base=this;
