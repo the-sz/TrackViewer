@@ -487,7 +487,7 @@ var trackViewer=(function()
 				icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
 			else
 				icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
-			new google.maps.Marker({position:position, map:map, title:title, icon:icon });
+			let marker=new google.maps.Marker({position:position, map:map, title:title, icon:icon });
 
 			_dots.push(position);
 		}
@@ -518,7 +518,7 @@ var trackViewer=(function()
 
 			// create line
 			if (_settings.useLines===true)
-				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
+				let polyline=new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
 		if (typeof center!=='undefined')
@@ -811,7 +811,7 @@ var trackViewer=(function()
 				index++;
 			});
 
-			new DeckGL(
+			let deckgl=new DeckGL(
 			{
 				container: _settings.domContainer,
 				mapboxApiAccessToken: _settings.mapBoxAccessToken,
