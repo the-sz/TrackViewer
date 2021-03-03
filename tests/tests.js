@@ -5,7 +5,7 @@ const chai=require('chai');
 const expect=chai.expect;
 
 // create zip
-const JSZip=require("node-zip");
+const JSZip=require('node-zip');
 global.JSZip=JSZip;
 
 // create jquery

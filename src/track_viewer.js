@@ -394,7 +394,7 @@ var trackViewer=(function()
 					position.z=parseFloat($(this).children('ele').text());
 
 					var date=$(this).children('time').text();
-					if (date!='')
+					if (date!=='')
 					{
 						position.date=new Date(date);
 						let dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
@@ -690,7 +690,7 @@ var trackViewer=(function()
 					bounds=new mapboxgl.LngLatBounds([parseFloat(this.x), parseFloat(this.y)],[parseFloat(this.x), parseFloat(this.y)]);
 				}
 
-				if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+				if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 					dataPoints[index].push([parseFloat(this.x), parseFloat(this.y)]);
 				else
 					dataPoints[index][0].path.push([parseFloat(this.x), parseFloat(this.y), parseFloat(this.z)*10]);
