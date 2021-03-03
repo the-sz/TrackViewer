@@ -518,7 +518,7 @@ var trackViewer=(function()
 
 			// create line
 			if (_settings.useLines===true)
-				let polyline=new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
+				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
 		if (typeof center!=='undefined')
