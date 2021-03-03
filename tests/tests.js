@@ -79,13 +79,13 @@ global.google.maps={ };
 google.maps.Map=class Map
 {
 	setCenter(parameter) { }
-}
+};
 google.maps.Point=class Point
 {
-}
+};
 google.maps.Polyline=class Polyline
 {
-}
+};
 global.google.maps.marker=[];
 google.maps.Marker=class Marker
 {
@@ -93,7 +93,7 @@ google.maps.Marker=class Marker
 	{
 		global.google.maps.marker.push(parameter);
 	}
-}
+};
 
 // create luxon
 global.luxon={ };
@@ -105,52 +105,52 @@ THREE.ImageUtils={ crossOrigin: '' };
 THREE.Scene=class Scene
 {
 	add(object) { }
-}
+};
 THREE.FogExp2=class FogExp2
 {
-}
+};
 THREE.PerspectiveCamera=class PerspectiveCamera
 {
 	position={ set() { } }
 	updateProjectionMatrix() { }
-}
+};
 THREE.Vector3=class Vector3
 {
 	normalize() { return this; }
-}
+};
 THREE.Mesh=class Mesh
 {
 	rotateOnAxis(vector) { }
 	updateMatrix() { }
 	scale={ y: 0 }
 	position={ x: 0, y: 0, z: 0 }
-}
+};
 THREE.DodecahedronGeometry=class DodecahedronGeometry
 {
-}
+};
 THREE.CylinderGeometry=class CylinderGeometry
 {
-}
+};
 THREE.PlaneBufferGeometry=class PlaneBufferGeometry
 {
-}
+};
 THREE.MeshPhongMaterial=class MeshPhongMaterial
 {
-}
+};
 THREE.MeshLambertMaterial=class MeshLambertMaterial
 {
-}
+};
 THREE.OrbitControls=class OrbitControls
 {
 	addEventListener() { }
-}
+};
 THREE.DirectionalLight=class DirectionalLight
 {
 	position={ set() { } }
-}
+};
 THREE.AmbientLight=class AmbientLight
 {
-}
+};
 THREE.WebGLRenderer=class WebGLRenderer
 {
 	setClearColor() { }
@@ -158,7 +158,7 @@ THREE.WebGLRenderer=class WebGLRenderer
 	setSize() { }
 	render() { }
 	domElement=$('<div></div>')[0];
-}
+};
 
 // load script
 var trackViewer=require('../src/track_viewer.js');
@@ -263,7 +263,7 @@ describe('Load()',function()
 		trackViewer.load(fileBlob,{ style: trackViewer.style2DAllRecords, useLines: true, domContainer: $('<div></div>')[0], domHeader: null });
 
 		// verify that coords match
-		expect(global.google.maps.marker.length).to.equal(count)
+		expect(global.google.maps.marker.length).to.equal(count);
 		//console.log(global.google.maps.marker);
 		for (index=0;index<coordinates.length;index++)
 		{
@@ -359,7 +359,7 @@ describe('Load()',function()
 		{
 			coordinatesCount+=PathLayerData[index].length;
 		}
-		expect(coordinatesCount).to.equal(count)
+		expect(coordinatesCount).to.equal(count);
 		//console.log(PathLayerData);
 		for (let index=0;index<coordinates.length;index++)
 		{

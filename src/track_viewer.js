@@ -157,7 +157,7 @@ var trackViewer=(function()
 
 			reader.readAsText(file);
 		}
-	}
+	};
 
 	// unload all stuff
 	function _unload()
@@ -381,7 +381,7 @@ var trackViewer=(function()
 					position.z=parseFloat($(this).children('AltitudeMeters').text());
 
 					position.date=new Date($(this).children('Time').text());
-					var dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+					let dateString=luxon.DateTime.fromISO($(this).children('Time').text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 					position.title=dateString+' - Height: '+position.z.toFixed(0)+'m - Heart Rate: '+parseFloat($(this).children('HeartRateBpm').children('Value').text()).toFixed(0)+'bpm - Distance: '+parseFloat($(this).children('DistanceMeters').text()).toFixed(0)+'m';
 
 					valid=true;
@@ -397,7 +397,7 @@ var trackViewer=(function()
 					if (date!='')
 					{
 						position.date=new Date(date);
-						var dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO(date, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 					}
 					else
@@ -411,7 +411,7 @@ var trackViewer=(function()
 				else if (isKML2===true)
 				{
 					// KML v2
-					var values=$(this).children('Point').children('coordinates').text().split(',');
+					let values=$(this).children('Point').children('coordinates').text().split(',');
 					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
@@ -420,7 +420,7 @@ var trackViewer=(function()
 
 						var dateRaw=$(this).children('TimeStamp').children('when').text();
 						position.date=new Date(dateRaw);
-						var dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO(dateRaw, { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 
 						valid=true;
@@ -443,7 +443,7 @@ var trackViewer=(function()
 					// KML v1
 					// this is 'when'
 					// coordinates are then coords
-					var values=$($(coordinates[track])[index]).text().split(' ');
+					let values=$($(coordinates[track])[index]).text().split(' ');
 					if (values.length===3)
 					{
 						position.x=parseFloat(values[0]);
@@ -451,7 +451,7 @@ var trackViewer=(function()
 						position.z=parseFloat(values[2]);
 
 						position.date=new Date($(this).text());
-						var dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+						let dateString=luxon.DateTime.fromISO($(this).text(), { setZone: true }).setLocale(userLang).toLocaleString(luxon.DateTime.DATETIME_SHORT);
 						position.title=dateString+' - Height: '+position.z.toFixed(0)+'m';
 
 						valid=true;
@@ -479,12 +479,14 @@ var trackViewer=(function()
 		// allow marker only every minute
 		if ((_settings.style===trackViewer.style2DAllRecords) || ((date-_lastDate)>(60*1000)))
 		{
+			var icon;
+
 			_lastDate=date;
 
 			if (_settings.style===trackViewer.style2DAllRecords)
-				var icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
+				icon={ url: _settings.dotImageLight, anchor: new google.maps.Point(_settings.dotImageLightAnchorX, _settings.dotImageLightAnchorY) };
 			else
-				var icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
+				icon={ url: _settings.dotImageHeavy, anchor: new google.maps.Point(_settings.dotImageHeavyAnchorX, _settings.dotImageHeavyAnchorY) };
 			new google.maps.Marker({position:position, map:map, title:title, icon:icon });
 
 			_dots.push(position);
@@ -510,7 +512,7 @@ var trackViewer=(function()
 
 				_create2DMarker(map,this.date,position,this.title);
 
-				if (center===undefined)
+				if (typeof center==='undefined')
 					center=position;
 			});
 
@@ -519,7 +521,7 @@ var trackViewer=(function()
 				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
 		});
 
-		if (center!==undefined)
+		if (typeof center!=='undefined')
 			map.setCenter(center);
 	}
 
@@ -672,7 +674,7 @@ var trackViewer=(function()
 		index=0;
 		$(positions).each(function()
 		{
-			if ((_settings.elevation==trackViewer.elevationFromMap) || (_settings.elevation==trackViewer.elevationNone))
+			if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
 				dataPoints.push([]);
 			else
 				dataPoints.push([ { 'path': [] } ]);
@@ -726,7 +728,7 @@ var trackViewer=(function()
 					'maxzoom': 14
 				});
 
-				if (_settings.elevation==trackViewer.elevationFromMap)
+				if (_settings.elevation===trackViewer.elevationFromMap)
 					map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
 
 				map.addControl(new mapboxgl.FullscreenControl());
