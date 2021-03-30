@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.5](https://www.github.com/the-sz/TrackViewer/compare/v1.0.4...v1.0.5) (2021-03-30)
+
+
+### Bug Fixes
+
+* select.html example fixed ([221bbaf](https://www.github.com/the-sz/TrackViewer/commit/221bbaf1d162a431436849a9fe0f564cf6325f84))
+
 ### [1.0.4](https://www.github.com/the-sz/TrackViewer/compare/v1.0.3...v1.0.4) (2021-03-03)
 
 
