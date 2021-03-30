@@ -144,16 +144,16 @@
 
 			function updateStyle()
 			{
-				var style=$('#style').val();
+				var style=parseInt($('#style').val());
 
-				if ((style==trackViewer.style2DAllRecords) || (style==trackViewer.style2DOneRecordPerMinute))
+				if ((style===trackViewer.style2DAllRecords) || (style===trackViewer.style2DOneRecordPerMinute))
 				{
 					$('.style-2d').css('display','flex');
 					$('.style-3d').css('display','none');
 					$('.style-3dmapbox').css('display','none');
 					$('#help').css('display','none');
 				}
-				else if ((style==trackViewer.style3DMapboxStreetMap) || (style==trackViewer.style3DMapboxSatellite))
+				else if ((style===trackViewer.style3DMapboxStreetMap) || (style===trackViewer.style3DMapboxSatellite))
 				{
 					$('.style-2d').css('display','none');
 					$('.style-3d').css('display','none');
@@ -187,10 +187,10 @@
 						return false;
 					var inputFile=inputFiles[0];
 
-					trackViewer.load(inputFile,{	style: $('#style').val(),
-															elevation: $('#elevation').val(),
-															useLines: $('#lines').val(),
-															useDots: $('#dots').val()
+					trackViewer.load(inputFile,{	style: parseInt($('#style').val()),
+															elevation: parseInt($('#elevation').val()),
+															useLines: (($('#lines').val()=="1")?true:false),
+															useDots: (($('#dots').val()=="1")?true:false)
 														});
 
 					return false;
