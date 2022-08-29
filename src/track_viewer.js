@@ -344,7 +344,7 @@ var trackViewer=(function()
 				//console.log('GPX');
 				$(nodes).each(function()
 				{
-					tracks.push($(this).find('trkseg').children());
+					tracks.push($(this).find('trkseg').find('trkpt'));
 				});
 				isGPX=true;
 				break;
@@ -405,7 +405,7 @@ var trackViewer=(function()
 						position.date=new Date();
 						position.title='Height: '+position.z.toFixed(0)+'m';
 					}
-		
+
 					valid=true;
 				}
 				else if (isKML2===true)

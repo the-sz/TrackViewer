@@ -282,7 +282,7 @@ describe('Load()',function()
 		var stub=sinon.stub(global.jQuery,'ajax');
 
 		var add=sinon.spy(THREE.Scene.prototype,'add');
-		
+
 		trackViewer.load(file,{ style: trackViewer.style3DBlueBackground, domContainer: $('<div></div>')[0], domHeader: null });
 
 		stub.yieldTo('success',fileContent);
@@ -419,6 +419,14 @@ describe('Load()',function()
 								isZip: false,
 							},
 
+							{	file: __dirname+'/test3.gpx',			// GPX GalileoGPS Speedometer for Android
+								count: 278,
+								coordinates: [[-73.2557892,41.2190134],[-73.2557892,41.2190134],[-73.2557892,41.2190134],[-73.2557892,41.2190134],[-73.2557767,41.21902],[-73.2557705,41.2190241]],
+								coordinates3D: [[-73.2557892,41.2190134,-40],[-73.2557892,41.2190134,-40],[-73.2557892,41.2190134,-40],[-73.2557892,41.2190134,-40],[-73.2557767,41.21902,-40]],
+								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: 0, y: 0, z: 0.04005 }, { x: 0, y: 0, z: 0.04005 }, { x: 0, y: 0, z: 0.04005 }, { x: 0.0012499999996862243, y: 0.0006599999998968542, z:  0.04005 }, { x: 0.0018699999998261774, y: 0.001069999999714355, z: 0.035833333333333335 }],
+								isZip: false,
+							},
+
 							{	file: __dirname+'/test1.kmz',			// zipped KML v1
 								count: 2382,
 								coordinates: [[11.450203,50.290867],[11.450252,50.290768]],
@@ -426,7 +434,7 @@ describe('Load()',function()
 								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: 0.004900000000063187, y: -0.009899999999873899, z: 43.32256825 }, { x: 0.00809999999997757, y: -0.014900000000039881, z: 43.32256825 }],
 								isZip: true,
 							},
-							
+
 							{	file: __dirname+'/test2.kmz',			// zipped KML Google My Maps
 								count: 39777,
 								coordinates: [[-80.28405,25.80854],[-80.2841,25.80854]],
@@ -434,7 +442,7 @@ describe('Load()',function()
 								positions: [{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0.04005 }, { x: -0.005000000000165983, y: 0, z: 0.04005 }, { x: -0.01100000000064938, y: -0.0019999999999242846, z: 0.04005 }],
 								isZip: true,
 							},
-							
+
 							{	file: __dirname+'/test1.invalid',	// invalid format
 								count: 0,
 								coordinates: [],
@@ -477,5 +485,5 @@ describe('Load()',function()
 		});
 
 	});
-		
+
 });
