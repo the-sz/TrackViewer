@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/the-sz/TrackViewer/compare/v1.0.5...v1.1.0) (2022-08-29)
+
+
+### Features
+
+* gpx support improved ([6ea7419](https://www.github.com/the-sz/TrackViewer/commit/6ea741935549e6050ea8905584d4d80de6c6e6c5))
+
 ### [1.0.5](https://www.github.com/the-sz/TrackViewer/compare/v1.0.4...v1.0.5) (2021-03-30)
 
 
