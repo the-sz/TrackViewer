@@ -1,10 +1,6 @@
-![JS Tests](https://github.com/the-sz/TrackViewer/workflows/JS%20Tests/badge.svg)
 [![codecov](https://codecov.io/gh/the-sz/TrackViewer/branch/master/graph/badge.svg?token=5XI6XLR02W)](https://codecov.io/gh/the-sz/TrackViewer)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/38ed52e629ba4982b86f0451328f34c5)](https://www.codacy.com/gh/the-sz/TrackViewer/dashboard?utm_source=github.com&utm_medium=referral&utm_content=the-sz/TrackViewer&utm_campaign=Badge_Coverage)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/the-sz/TrackViewer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/the-sz/TrackViewer/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/the-sz/TrackViewer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/the-sz/TrackViewer/context:javascript)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/38ed52e629ba4982b86f0451328f34c5)](https://www.codacy.com/gh/the-sz/TrackViewer/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=the-sz/TrackViewer&amp;utm_campaign=Badge_Grade)
-![GitHub all releases](https://img.shields.io/github/downloads/the-sz/TrackViewer/total)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 # TrackViewer
