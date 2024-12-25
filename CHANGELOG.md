@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/the-sz/TrackViewer/compare/v1.2.0...v1.2.1) (2024-12-25)
+
+
+### Bug Fixes
+
+* update doc ([f293520](https://www.github.com/the-sz/TrackViewer/commit/f2935201f5d0aa17a17c9167c44948e692d32062))
+
 ## [1.2.0](https://www.github.com/the-sz/TrackViewer/compare/v1.1.0...v1.2.0) (2024-12-25)
 
 
