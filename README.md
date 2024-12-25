@@ -83,10 +83,20 @@ X center of the `dotImageHeavy` image.
 Y center of the `dotImageHeavy` image.
 ### lineColor2D: '#0776FF'
 Color of the connecting line in 2D style if `useLines: true`.
-### lineColor3DMapBoxElevationFromMap: 'rgba(4, 117, 255, 1.0)'
+### lineOpacity2D: 0.5
+Opacity of the connecting line in 2D style if `useLines: true`.
+### lineWeight2D: 2
+Weight of the connecting line in 2D style if `useLines: true`.
+### lineColor3DMapBoxElevationFromMap: 'rgba(7, 118, 255, 1.0)'
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromMap` or `elevation: trackViewer.elevationNone`.
-### lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255]
+### lineColor3DMapBoxElevationFromFile: [7, 118, 255, 255]
 Track color in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
+### lineWidth3DMapBoxElevationFromMap: 3
+Track width in 3D MapBox style if `elevation: trackViewer.elevationFromMap` or `elevation: trackViewer.elevationNone`.
+### lineWidth3DMapBoxElevationFromFile: 1
+Track width in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
+### lineColor3D: 0xFF0000
+Color of the lines/bars in 3D style.
 
 ## License
 [GNU General Public License v3.0](LICENSE.md)
