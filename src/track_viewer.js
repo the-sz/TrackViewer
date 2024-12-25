@@ -61,8 +61,13 @@ var trackViewer=(function()
 		dotImageHeavyAnchorX: 13,
 		dotImageHeavyAnchorY: 13,
 		lineColor2D: '#0776FF',
-		lineColor3DMapBoxElevationFromMap: 'rgba(4, 117, 255, 1.0)',
-		lineColor3DMapBoxElevationFromFile: [4, 117, 255, 255],
+		lineOpacity2D: 0.5,
+		lineWeight2D: 2,
+		lineColor3DMapBoxElevationFromMap: 'rgba(7, 118, 255, 1.0)',
+		lineColor3DMapBoxElevationFromFile: [7, 118, 255, 255],
+		lineWidth3DMapBoxElevationFromMap: 3,
+		lineWidth3DMapBoxElevationFromFile: 1,
+		lineColor3D: 0xFF0000,
 	};
 
 	// init basics
@@ -209,7 +214,7 @@ var trackViewer=(function()
 	function _setFullScreen(fullScreen)
 	{
 		_isFullScreen=fullScreen;
-		
+
 		if (_isFullScreen===true)
 		{
 			// set container to full screen
@@ -518,9 +523,8 @@ var trackViewer=(function()
 
 			// create line
 			if (_settings.useLines===true)
-				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: 0.5, strokeWeight: 2, map: map });
+				new google.maps.Polyline({ path: _dots, geodesic: false, strokeColor: _settings.lineColor2D, strokeOpacity: _settings.lineOpacity2D, strokeWeight: _settings.lineWeight2D, map: map });
 		});
-
 		if (typeof center!=='undefined')
 			map.setCenter(center);
 	}
@@ -550,7 +554,7 @@ var trackViewer=(function()
 		else
 			geometry=new THREE.CylinderGeometry(radius,radius,1,10,1);
 
-		var material=new THREE.MeshLambertMaterial( { color:0xFF0000, flatShading:true } );
+		var material=new THREE.MeshLambertMaterial( { color:_settings.lineColor3D, flatShading:true } );
 
 		// add all coordinates to our space
 		var positions=_parseTrack(data);
@@ -563,7 +567,7 @@ var trackViewer=(function()
 					// save start position as base
 					_base=this;
 					initial=false;
-		
+
 					// add earth surface
 					var earthSize=300;
 					var maptype=null;
@@ -590,9 +594,9 @@ var trackViewer=(function()
 						_scene.add(_plane);
 					}
 				}
-		
+
 				var mesh=new THREE.Mesh(geometry,material);
-		
+
 				if (_settings.useDots===true)
 				{
 					// create dot
@@ -613,7 +617,7 @@ var trackViewer=(function()
 					}
 					else if (height===0)
 						height=0.0001;
-		
+
 					// rotate up
 					mesh.rotateOnAxis((new THREE.Vector3(1,0,0)).normalize(),(Math.PI/2));
 					// set height
@@ -622,7 +626,7 @@ var trackViewer=(function()
 					mesh.position.y=(this.y-_base.y)*100;
 					mesh.position.z=(height/2)+z+0.04;				// move the cylinder a little bit up to prevent drawing errors
 				}
-		
+
 				mesh.updateMatrix();
 				mesh.matrixAutoUpdate=false;
 				_scene.add(mesh);
@@ -773,7 +777,7 @@ var trackViewer=(function()
 						paint:
 						{
 							'line-color': _settings.lineColor3DMapBoxElevationFromMap,
-							'line-width': 3
+							'line-width': _settings.lineWidth3DMapBoxElevationFromMap
 						},
 						layout:
 						{
@@ -800,11 +804,11 @@ var trackViewer=(function()
 						id: 'layer_'+index,
 						data: this,
 						billboard: true,
-						widthScale: 1,
+						widthScale: _settings.lineWidth3DMapBoxElevationFromFile,
 						widthMinPixels: 2,
-						widthMaxPixels: 10,
+						widthMaxPixels: 1000,
 						getColor: d => _settings.lineColor3DMapBoxElevationFromFile,
-						getWidth: d => 1,
+						getWidth: d => _settings.lineWidth3DMapBoxElevationFromFile,
 					}
 				));
 
