@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/the-sz/TrackViewer/compare/v1.1.0...v1.2.0) (2024-12-25)
+
+
+### Features
+
+* line color and width selection ([4bab0ae](https://www.github.com/the-sz/TrackViewer/commit/4bab0ae9b30dcc815f055b9bb1adccef62c0a237))
+
 ## [1.1.0](https://www.github.com/the-sz/TrackViewer/compare/v1.0.5...v1.1.0) (2022-08-29)
 
 
