@@ -12,12 +12,29 @@ In 2D you can see each recorded position. The tooltip will show you the exact ti
 ## Demo
 See https://the-sz.com/products/track_viewer/ for a real life demo.
 
+## 3D Cesium Style
+![](.github/sample_3d_cesium.png)
+
+The track is shown on a map from [CesiumJS](https://cesium.com/platform/cesiumjs/). The map can be the Cesium default Bing Maps (`style: trackViewer.style3DCesiumDefault`) or from Google Maps with Photorealistic 3D Tiles (`style: trackViewer.style3DCesiumGoogle`).
+
+For Cesium Style, you need to load `track_viewer_module.js` as module before the normal `track_viewer.js` like `<script src="track_viewer_module.js" type="module"></script>`.
+
+The map can have 3D terrain or can be flat:
+### 3D terrain
+`elevation: trackViewer.elevationFromMap` will show a 3D terrain with the track laid onto the terrain.
+
+### Flat map with Elevation from track
+`elevation: trackViewer.elevationFromFile` will show a flat map where the track is shown in 3D. The elevation is taken from the track.
+
+### Flat
+`elevation: trackViewer.elevationNone` will show a flat map with a flat track.
+
 ## 3D MapBox Style
 ![](.github/sample_3d_mapbox.png)
 
 The track is shown on a map from [MapBox](https://www.mapbox.com/). The map can be a street map (`style: trackViewer.style3DMapboxStreetMap`) or a satellite map (`style: trackViewer.style3DMapboxSatellite`).
 
-The map can have 3D terrain or can be flat.
+The map can have 3D terrain or can be flat:
 ### 3D terrain
 `elevation: trackViewer.elevationFromMap` will show a 3D terrain with the track laid onto the terrain.
 
@@ -44,7 +61,7 @@ This example shows how to use a track file selected by user from the local compu
 [Remote](./examples/remote.html)
 This example shows how to load track from a server. The track is shown in full window size. The used styles are hard coded.
 
-> Note: You must specify your MapBox access token and Google maps key in the HTML files. Search for \*\*\*KEY\*\*\*.
+> Note: You must specify your MapBox access token, Cesium access token and Google maps key in the HTML files. Search for \*\*\*KEY\*\*\*.
 
 ## Options
 ### style: trackViewer.style3DMapboxSatellite
@@ -59,6 +76,8 @@ Whether the track records should be shown as bars or dots in 3D style.
 Specify your MapBox access token.
 ### googleMapsKey: null
 Specify your Google maps key.
+### cesiumAccessToken: null
+Specify your Cesium access token.
 ### domContainer: null
 HTML object where the map will be rendered.
 ### domHeader: null
@@ -95,6 +114,14 @@ Track color in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
 Track width in 3D MapBox style if `elevation: trackViewer.elevationFromMap` or `elevation: trackViewer.elevationNone`.
 ### lineWidth3DMapBoxElevationFromFile: 1
 Track width in 3D MapBox style if `elevation: trackViewer.elevationFromFile`.
+### lineColor3DCesium: '#0776FF',
+Track color in 3D Cesium styles.
+### lineWidth3DCesium: 2,
+Track width in 3D Cesium styles.
+### dotSize3DCesium: 5,
+If `useDots: true`, in Cesium styles, each track record has a dot and can be clicked to show the exact time and height.
+### cameraMove3DCesium: 'fly',
+How should the camera in Cesium styles move to the start of the track. `fly` or `set`.
 ### lineColor3D: 0xFF0000
 Color of the lines/bars in 3D style.
 

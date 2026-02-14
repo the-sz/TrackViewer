@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=lcov --include src/* mocha tests/",
+    "test": "nyc --reporter=lcov --include src/track_viewer.js mocha tests/",
     "codecov": "codecov --disable=gcov -t bc92828b-44f5-4adc-adaf-fd2f67005dda"
   },
   "author": "",

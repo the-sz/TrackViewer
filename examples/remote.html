@@ -17,7 +17,8 @@
 
 		<div id="container"></div>
 
-		<link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" />
+		<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" />
+		<link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.138/Build/Cesium/Widgets/widgets.css" />
 		<script src="https://maps.googleapis.com/maps/api/js?key=***KEY***"></script>
 		<script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
 		<script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
@@ -26,6 +27,7 @@
 		<script src="../libs/three/OrbitControls.js"></script>
 		<script src="../libs/jszip/jszip.min.js"></script>
 		<script src="../libs/luxon/luxon.min.js"></script>
+		<script src="../src/track_viewer_module.js" type="module"></script>
 		<script src="../src/track_viewer.js"></script>
 
 		<script>
@@ -34,6 +36,7 @@
 			{
 				trackViewer.init(	{	mapBoxAccessToken: '***KEY***',
 											googleMapsKey: '***KEY***',
+											cesiumAccessToken: '***KEY***',
 											domContainer: $('#container')[0],
 											dotImageLight: 'images/dotlight.png',
 											dotImageHeavy: 'images/dotheavy.png',

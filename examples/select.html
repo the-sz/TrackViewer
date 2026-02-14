@@ -36,7 +36,7 @@
 				background-image: url("images/fullscreen_exit.png") !important;
 			}
 		</style>
-		
+
 	</head>
 
 	<body>
@@ -59,6 +59,8 @@
 						<option value="5">2D - One Record per Minute</option>
 						<option value="6">3D - Mapbox - Street Map</option>
 						<option value="7">3D - Mapbox - Satellite</option>
+						<option value="9">3D - Cesium - Google</option>
+						<option value="8">3D - Cesium - Default</option>
 						<option value="0">3D - Google Maps - Street Map</option>
 						<option value="1">3D - Google Maps - Satellite</option>
 						<option value="2">3D - Blue Background</option>
@@ -84,7 +86,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="style-3dmapbox" style="display: none !important">
+			<div class="style-3dex" style="display: none !important">
 				<label for="dots">3D Style:</label>
 				<div>
 					<select name="elevation" id="elevation">
@@ -129,7 +131,8 @@
 
 		<div id="container" style="display: inline;"></div>
 
-		<link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" />
+		<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" />
+		<link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.138/Build/Cesium/Widgets/widgets.css" />
 		<script src="https://maps.googleapis.com/maps/api/js?key=***KEY***"></script>
 		<script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
 		<script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
@@ -138,6 +141,7 @@
 		<script src="../libs/three/OrbitControls.js"></script>
 		<script src="../libs/jszip/jszip.min.js"></script>
 		<script src="../libs/luxon/luxon.min.js"></script>
+		<script src="../src/track_viewer_module.js" type="module"></script>
 		<script src="../src/track_viewer.js"></script>
 
 		<script>
@@ -150,21 +154,21 @@
 				{
 					$('.style-2d').css('display','flex');
 					$('.style-3d').css('display','none');
-					$('.style-3dmapbox').css('display','none');
+					$('.style-3dex').css('display','none');
 					$('#help').css('display','none');
 				}
-				else if ((style===trackViewer.style3DMapboxStreetMap) || (style===trackViewer.style3DMapboxSatellite))
+				else if ((style===trackViewer.style3DMapboxStreetMap) || (style===trackViewer.style3DMapboxSatellite) || (style===trackViewer.style3DCesiumDefault) || (style===trackViewer.style3DCesiumGoogle))
 				{
 					$('.style-2d').css('display','none');
 					$('.style-3d').css('display','none');
-					$('.style-3dmapbox').css('display','flex');
+					$('.style-3dex').css('display','flex');
 					$('#help').css('display','none');
 				}
 				else
 				{
 					$('.style-2d').css('display','none');
 					$('.style-3d').css('display','flex');
-					$('.style-3dmapbox').css('display','none');
+					$('.style-3dex').css('display','none');
 					$('#help').css('display','block');
 				}
 			}
@@ -205,6 +209,7 @@
 
 				trackViewer.init(	{	mapBoxAccessToken: '***KEY***',
 											googleMapsKey: '***KEY***',
+											cesiumAccessToken: '***KEY***',
 											domContainer: $('#container')[0],
 											domFullScreenControl: $('#fullscreen_control')[0],
 											domInfo: $('#info')[0],
