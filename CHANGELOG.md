@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/the-sz/TrackViewer/compare/v1.2.1...v1.3.0) (2026-02-14)
+
+
+### Features
+
+* cesium styles added ([58ca4ba](https://www.github.com/the-sz/TrackViewer/commit/58ca4bafc8a13daf53075649d04be801a5cd2cda))
+
 ### [1.2.1](https://www.github.com/the-sz/TrackViewer/compare/v1.2.0...v1.2.1) (2024-12-25)
 
 
