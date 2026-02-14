@@ -25,6 +25,8 @@ var trackViewer=(function()
 	trackViewer.style2DOneRecordPerMinute=5;
 	trackViewer.style3DMapboxStreetMap=6;
 	trackViewer.style3DMapboxSatellite=7;
+	trackViewer.style3DCesiumDefault=8;
+	trackViewer.style3DCesiumGoogle=9;
 
 	trackViewer.elevationNone=0;
 	trackViewer.elevationFromFile=1;
@@ -49,6 +51,7 @@ var trackViewer=(function()
 		useDots: false,
 		mapBoxAccessToken: null,
 		googleMapsKey: null,
+		cesiumAccessToken: null,
 		domContainer: null,
 		domHeader: null,
 		domFullScreenControl: null,
@@ -67,6 +70,10 @@ var trackViewer=(function()
 		lineColor3DMapBoxElevationFromFile: [7, 118, 255, 255],
 		lineWidth3DMapBoxElevationFromMap: 3,
 		lineWidth3DMapBoxElevationFromFile: 1,
+		lineColor3DCesium: '#0776FF',
+		lineWidth3DCesium: 2,
+		dotSize3DCesium: 5,
+		cameraMove3DCesium: 'fly',
 		lineColor3D: 0xFF0000,
 	};
 
@@ -262,6 +269,11 @@ var trackViewer=(function()
 			// 3D mapbox
 			_load3DMapbox(data);
 		}
+		else if ((_settings.style===trackViewer.style3DCesiumDefault) || (_settings.style===trackViewer.style3DCesiumGoogle))
+		{
+			// 3D cesium
+			_load3DCesium(data);
+		}
 		else
 		{
 			// 3D
@@ -272,7 +284,7 @@ var trackViewer=(function()
 		_onWindowResize();
 	}
 
-	// convert all suppored track formats into one position list
+	// convert all supported track formats into one position list
 	function _parseTrack(data)
 	{
 		var nodes;
@@ -833,6 +845,109 @@ var trackViewer=(function()
 				layers: layers,
 			});
 		}
+	}
+
+	// load track and display in 3D cesium, track_viewer_module.js must be loaded as module
+	async function _load3DCesium(data)
+	{
+		Cesium.Ion.defaultAccessToken = _settings.cesiumAccessToken;
+
+		// create viewer
+		let viewer;
+		if (_settings.style===trackViewer.style3DCesiumDefault)
+		{
+			viewer = new Cesium.Viewer(_settings.domContainer,
+			{
+				terrainProvider: (_settings.elevation===trackViewer.elevationFromMap) ? await Cesium.CesiumTerrainProvider.fromIonAssetId(1) : null,
+				timeline: false,
+				animation: false
+			});
+
+			viewer.scene.globe.terrainExaggeration=10.0;
+		}
+		else if (_settings.style===trackViewer.style3DCesiumGoogle)
+		{
+			viewer = new Cesium.Viewer(_settings.domContainer,
+			{
+				terrainProvider: await Cesium.CesiumTerrainProvider.fromIonAssetId(1),
+				globe: false,
+				geocoder: Cesium.IonGeocodeProviderType.GOOGLE,
+				timeline: false,
+				animation: false
+			});
+
+			viewer.scene.primitives.add(await Cesium.Cesium3DTileset.fromIonAssetId(2275207));
+		}
+
+		// add all coordinates to data array
+		const tracks=_parseTrack(data);
+		const array=[];
+		let initial=true;
+		for (const track of tracks)
+		{
+			for (const position of track)
+			{
+				// add position to array
+				if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
+					array.push(position.x, position.y);
+				else
+					array.push(position.x, position.y, position.z);
+
+				if (_settings.useDots==true)
+				{
+					// add dots
+					viewer.entities.add(
+					{
+						position: Cesium.Cartesian3.fromDegrees(position.x, position.y),
+						description: position.title,
+						ellipse:
+						{
+							semiMajorAxis: _settings.dotSize3DCesium,
+							semiMinorAxis: _settings.dotSize3DCesium,
+							material: Cesium.Color.fromCssColorString(_settings.lineColor3DCesium),
+							height: position.z,
+							heightReference: ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone)) ? Cesium.HeightReference.CLAMP_TO_GROUND : Cesium.HeightReference.NONE,
+						},
+					});
+				}
+
+				if (initial===true)
+				{
+					// save start position as base
+					_base=position;
+					initial=false;
+				}
+			}
+		}
+
+		let positions;
+		let clampToGround;
+		if ((_settings.elevation===trackViewer.elevationFromMap) || (_settings.elevation===trackViewer.elevationNone))
+		{
+			positions=Cesium.Cartesian3.fromDegreesArray(array);
+			clampToGround=true;
+		}
+		else
+		{
+			positions=Cesium.Cartesian3.fromDegreesArrayHeights(array);
+			clampToGround=false;
+		}
+
+		viewer.entities.add(
+		{
+			polyline:
+			{
+				positions: positions,
+				width: _settings.lineWidth3DCesium,
+				clampToGround: clampToGround,
+				material: Cesium.Color.fromCssColorString(_settings.lineColor3DCesium),
+			}
+		});
+
+		if (_settings.cameraMove3DCesium=='fly')
+			viewer.camera.flyTo( { destination: Cesium.Cartesian3.fromDegrees(_base.x, _base.y, 15000) } );
+		else
+			viewer.camera.setView( { destination: Cesium.Cartesian3.fromDegrees(_base.x, _base.y, 15000) } );
 	}
 
 	return trackViewer;
