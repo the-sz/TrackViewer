@@ -879,6 +879,8 @@ var trackViewer=(function()
 			viewer.scene.primitives.add(await Cesium.Cesium3DTileset.fromIonAssetId(2275207));
 		}
 
+		viewer.fullscreenButton.viewModel.fullscreenElement = viewer.container;
+
 		// add all coordinates to data array
 		const tracks=_parseTrack(data);
 		const array=[];
