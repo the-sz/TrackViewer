@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.3.1](https://www.github.com/the-sz/TrackViewer/compare/v1.3.0...v1.3.1) (2026-02-15)
+
+
+### Bug Fixes
+
+* fullscreen ([5570165](https://www.github.com/the-sz/TrackViewer/commit/5570165820a84ebd434feba75e60859b7087bbaf))
+
 ## [1.3.0](https://www.github.com/the-sz/TrackViewer/compare/v1.2.1...v1.3.0) (2026-02-14)
 
 
